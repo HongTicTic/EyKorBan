@@ -1,5 +1,6 @@
 import { Fragment, type HTMLAttributes, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
+import { AppIcon } from "@/components/app-icon"
 import { Separator } from "@/components/ui/separator"
 
 // ============================================================================
@@ -78,52 +79,6 @@ const DEFAULT_BADGES = ["Middleman Escrow Protected", "Global Payouts"]
 // Internal Sub-components (Single Responsibility Principle)
 // ============================================================================
 
-function DefaultBrandLogo() {
-  return (
-    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-neutral-200/80 bg-white p-1.5 shadow-2xs dark:border-neutral-800 dark:bg-neutral-900">
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="size-full text-[#d95a51]"
-        aria-hidden="true"
-      >
-        <path
-          d="M12 2L3 7V17L12 22L21 17V7L12 2Z"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M12 22V12"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-        />
-        <path
-          d="M21 7L12 12L3 7"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M16.5 4.5L7.5 9.5"
-          stroke="currentColor"
-          strokeWidth="1.25"
-          strokeOpacity="0.7"
-        />
-        <path
-          d="M7.5 14.5L12 17L16.5 14.5"
-          stroke="currentColor"
-          strokeWidth="1.25"
-          strokeOpacity="0.7"
-        />
-      </svg>
-    </div>
-  )
-}
-
 function FooterBrand({
   name,
   description,
@@ -139,7 +94,7 @@ function FooterBrand({
         href="/"
         className="inline-flex items-center gap-2.5 transition-opacity hover:opacity-85"
       >
-        {logo ?? <DefaultBrandLogo />}
+        {logo ?? <AppIcon className="size-9" />}
         <span className="text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
           {name}
         </span>
