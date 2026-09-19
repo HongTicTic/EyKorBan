@@ -1,5 +1,5 @@
-import { ProjectCard } from "@/interface/projectCard";
-import { User, RoleName } from "@/interface/user";
+import { ProjectCard } from "@/interface/projectCard"
+import { User, RoleName } from "@/interface/user"
 
 export const MOCK_PROJECT_CARDS: ProjectCard[] = [
   {
@@ -112,7 +112,7 @@ export const MOCK_PROJECT_CARDS: ProjectCard[] = [
     likeCount: 275,
     viewCount: 7600,
   },
-];
+]
 
 export const MOCK_USERS: User[] = [
   {
@@ -121,7 +121,8 @@ export const MOCK_USERS: User[] = [
     username: "alexvance",
     role: RoleName.FREELANCER,
     email: "alex.vance@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2026-01-15T08:30:00Z",
     updatedAt: "2026-09-18T10:00:00Z",
@@ -133,7 +134,8 @@ export const MOCK_USERS: User[] = [
     username: "sarahchen",
     role: RoleName.FREELANCER,
     email: "sarah.chen@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2026-02-10T11:20:00Z",
     updatedAt: "2026-09-17T15:00:00Z",
@@ -145,7 +147,8 @@ export const MOCK_USERS: User[] = [
     username: "marcus_design",
     role: RoleName.FREELANCER,
     email: "marcus.a@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2026-03-01T09:10:00Z",
     updatedAt: "2026-09-16T12:00:00Z",
@@ -157,7 +160,8 @@ export const MOCK_USERS: User[] = [
     username: "davidkim_cloud",
     role: RoleName.FREELANCER,
     email: "david.kim@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2026-01-20T14:40:00Z",
     updatedAt: "2026-09-15T09:00:00Z",
@@ -169,7 +173,8 @@ export const MOCK_USERS: User[] = [
     username: "elena_arts",
     role: RoleName.FREELANCER,
     email: "elena.rostova@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2026-04-12T16:15:00Z",
     updatedAt: "2026-09-14T17:00:00Z",
@@ -181,7 +186,8 @@ export const MOCK_USERS: User[] = [
     username: "liam_dev",
     role: RoleName.FREELANCER,
     email: "liam.oconnor@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2026-02-28T10:05:00Z",
     updatedAt: "2026-09-13T11:00:00Z",
@@ -193,7 +199,8 @@ export const MOCK_USERS: User[] = [
     username: "mayapatel_ui",
     role: RoleName.FREELANCER,
     email: "maya.patel@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2026-03-18T13:25:00Z",
     updatedAt: "2026-09-12T14:00:00Z",
@@ -205,7 +212,8 @@ export const MOCK_USERS: User[] = [
     username: "carlos_growth",
     role: RoleName.FREELANCER,
     email: "carlos.mendez@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
     status: "PENDING_VERIFICATION",
     createdAt: "2026-05-05T08:00:00Z",
     updatedAt: "2026-09-11T08:00:00Z",
@@ -217,7 +225,8 @@ export const MOCK_USERS: User[] = [
     username: "sophianguyen",
     role: RoleName.CLIENT,
     email: "sophia.nguyen@example.com",
-    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2026-01-10T07:45:00Z",
     updatedAt: "2026-09-10T12:30:00Z",
@@ -229,12 +238,11 @@ export const MOCK_USERS: User[] = [
     username: "oliverwright",
     role: RoleName.ADMIN,
     email: "admin.oliver@eykorban.com",
-    avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80",
     status: "ACTIVE",
     createdAt: "2025-12-01T09:00:00Z",
     updatedAt: "2026-09-09T15:30:00Z",
     lastLoginAt: "2026-09-19T13:00:00Z",
   },
-];
-
-
+]

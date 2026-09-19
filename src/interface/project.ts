@@ -24,4 +24,3 @@ export interface Project {
   likeCount?: number
   viewCount?: number
 }
-
