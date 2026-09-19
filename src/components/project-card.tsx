@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Image as ImageIcon } from "lucide-react"
+import { Image as ImageIcon, Heart, Eye } from "lucide-react"
 import {
     Card,
     CardHeader,
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import type { ProjectCard as IProjectCard } from "@/interface/projectCard"
+import { getCategoryName } from "@/interface/category"
 
 export interface CardTag {
     label: string
@@ -34,6 +35,10 @@ export interface ProjectCardProps {
     authorAvatar?: string
     /** Author avatar fallback initials */
     authorInitials?: string
+    /** Likes metric */
+    likeCount?: number
+    /** Views metric */
+    viewCount?: number
     /** List of tag names or tag objects */
     tags?: (CardTag | string)[]
     /** URL / path to navigate to when clicked */
@@ -53,6 +58,13 @@ function getInitials(name?: string): string {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
+function formatMetric(count?: number): string {
+    if (count === undefined || count === null) return "0"
+    if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`
+    if (count >= 1_000) return `${(count / 1_000).toFixed(1).replace(/\.0$/, "")}k`
+    return count.toString()
+}
+
 export function ProjectCard({
     project,
     id = project?.id,
@@ -62,6 +74,8 @@ export function ProjectCard({
     authorName = "Mira Renko",
     authorAvatar = "https://github.com/shadcn.png",
     authorInitials,
+    likeCount = project?.likeCount,
+    viewCount = project?.viewCount,
     tags,
     href,
     onClick,
@@ -77,7 +91,7 @@ export function ProjectCard({
         (project
             ? [
                 ...(project.categoryId
-                    ? [{ label: project.categoryId, variant: "secondary" as const }]
+                    ? [{ label: getCategoryName(project.categoryId), variant: "secondary" as const }]
                     : []),
                 ...(subtitle
                     ? [{ label: subtitle, variant: "outline" as const }]
@@ -129,24 +143,41 @@ export function ProjectCard({
 
                 {/* Title using CardHeader & CardTitle */}
                 <CardHeader className="px-4 pt-3.5 pb-0">
-                    <CardTitle className="text-[17px] font-medium leading-snug tracking-tight text-neutral-900 dark:text-neutral-100 transition-colors group-hover:text-primary dark:group-hover:text-primary">
+                    <CardTitle className="text-[17px] font-medium leading-snug tracking-tight text-neutral-900 dark:text-neutral-100 transition-colors group-hover:text-primary dark:group-hover:text-primary line-clamp-1">
                         {title}
                     </CardTitle>
                 </CardHeader>
 
-                {/* Author row using CardContent & Avatar */}
-                <CardContent className="px-4 pt-2.5 pb-0">
-                    <div className="flex items-center gap-2">
-                        <Avatar className="size-6 bg-neutral-100 dark:bg-neutral-800">
+                {/* Author & Metrics row using CardContent & Avatar */}
+                <CardContent className="px-4 pt-2.5 pb-0 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <Avatar className="size-6 shrink-0 bg-neutral-100 dark:bg-neutral-800">
                             {authorAvatar && <AvatarImage src={authorAvatar} alt={authorName} />}
                             <AvatarFallback className="text-[11px] font-medium text-neutral-600 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800">
                                 {initials}
                             </AvatarFallback>
                         </Avatar>
-                        <span className="text-[13px] text-neutral-600 dark:text-neutral-400 font-normal">
+                        <span className="text-[13px] text-neutral-600 dark:text-neutral-400 font-normal truncate">
                             {authorName}
                         </span>
                     </div>
+
+                    {(likeCount !== undefined || viewCount !== undefined) && (
+                        <div className="flex items-center gap-2.5 shrink-0 text-xs text-neutral-400 dark:text-neutral-500 font-medium">
+                            {likeCount !== undefined && (
+                                <span className="flex items-center gap-1">
+                                    <Heart className="size-3.5 text-neutral-400 dark:text-neutral-500" />
+                                    {formatMetric(likeCount)}
+                                </span>
+                            )}
+                            {viewCount !== undefined && (
+                                <span className="flex items-center gap-1">
+                                    <Eye className="size-3.5 text-neutral-400 dark:text-neutral-500" />
+                                    {formatMetric(viewCount)}
+                                </span>
+                            )}
+                        </div>
+                    )}
                 </CardContent>
 
                 {/* Tags row using CardFooter & Badge (no hover) */}
@@ -171,4 +202,5 @@ export function ProjectCard({
         </a>
     )
 }
+
 
