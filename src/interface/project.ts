@@ -3,7 +3,7 @@ export interface Tag {
   tagName: string
 }
 
-export enum Category {
+export const enum Category {
   GENERAL = "GENERAL",
   TECH = "TECH",
   DESIGN = "DESIGN",
