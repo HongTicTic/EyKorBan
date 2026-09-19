@@ -1,23 +1,27 @@
-interface Project {
-  projectId: string
-  userId: string
-  projectTitle: string
-  projectDesc: string
-  tag: Tag[]
-  img: string[]
-  category: Category.GENERAL
-  pubDate: Date
-}
-
-interface Tag {
+export interface Tag {
   tagId: string
   tagName: string
 }
 
-const enum Category {
+export enum Category {
   GENERAL = "GENERAL",
   TECH = "TECH",
   DESIGN = "DESIGN",
   BUSINESS = "BUSINESS",
   OTHER = "OTHER",
 }
+
+export interface Project {
+  projectId: string
+  userId: string
+  projectTitle: string
+  projectDesc: string
+  tag: Tag[]
+  img: string[]
+  category: Category
+  pubDate: Date | string
+  subtitle?: string
+  likeCount?: number
+  viewCount?: number
+}
+
