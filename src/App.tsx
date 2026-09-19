@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Header } from "./components/header"
 import { ProjectCard } from "./components/project-card"
 import Home from "./pages/Home"
 
