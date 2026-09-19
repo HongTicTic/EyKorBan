@@ -11,7 +11,7 @@ import type { User } from "./interface/user"
 const demoFreelancer: User = {
   userId: "usr_001",
   name: "Mira Renko",
-  role: RoleName.FREELANCER,
+  role: RoleName.CLIENT,
   email: "mira@example.com",
   avatarUrl: "https://github.com/shadcn.png",
   status: "ACTIVE",
