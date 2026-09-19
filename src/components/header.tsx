@@ -1,14 +1,7 @@
 import * as React from "react"
-import {
-  Sparkles,
-  Search,
-  Bookmark,
-  Bell,
-  Upload,
-  Menu,
-  X,
-} from "lucide-react"
+import { Search, Bookmark, Bell, Upload, Menu, X } from "lucide-react"
 
+import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -29,12 +22,9 @@ export function Header() {
         <div className="flex flex-1 items-center gap-6 md:gap-8 max-w-xl">
           <a
             href="#"
-            className="group flex items-center gap-2.5 text-lg font-bold tracking-tight text-foreground no-underline outline-none"
+            className="group flex shrink-0 items-center no-underline outline-none"
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
-              <Sparkles className="size-4" />
-            </span>
-            <span className="font-semibold text-foreground">Showcase</span>
+            <Logo className="h-7 transition-transform group-hover:scale-105" />
           </a>
 
           <div className="relative hidden w-full max-w-md sm:block">
