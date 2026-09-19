@@ -121,7 +121,7 @@ export function ProjectCard({
             onClick={onClick}
             target={target}
             className={cn(
-                "group block w-full max-w-[340px] text-left no-underline outline-none cursor-pointer select-none",
+                "group block w-full max-w-sm md:max-w-[340px] text-left no-underline outline-none cursor-pointer select-none",
                 className
             )}
         >
@@ -149,7 +149,7 @@ export function ProjectCard({
                 </CardHeader>
 
                 {/* Author & Metrics row using CardContent & Avatar */}
-                <CardContent className="px-4 pt-2.5 pb-0 flex items-center justify-between gap-2">
+                <CardContent className="px-4 pt-2.5 pb-0 flex flex-col sm:flex-row items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
                         <Avatar className="size-6 shrink-0 bg-neutral-100 dark:bg-neutral-800">
                             {authorAvatar && <AvatarImage src={authorAvatar} alt={authorName} />}
@@ -180,24 +180,53 @@ export function ProjectCard({
                     )}
                 </CardContent>
 
-                {/* Tags row using CardFooter & Badge (no hover) */}
-                <CardFooter className="flex items-center gap-2 px-4 pt-3 pb-4">
-                    {normalizedTags.map((tag, idx) => (
+                {/* Tags – vertical ticker (pause on hover) */}
+                {normalizedTags.length === 1 ? (
+                    // Single tag – static, no animation needed
+                    <CardFooter className="flex items-center gap-2 px-4 pt-3 pb-4">
                         <Badge
-                            key={`${tag.label}-${idx}`}
-                            variant={tag.variant}
+                            variant={normalizedTags[0].variant}
                             className={cn(
-                                "rounded-lg px-2.5 py-0.5 text-xs font-normal h-auto pointer-events-none select-none transition-none",
-                                tag.variant === "secondary" &&
-                                "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-800 dark:hover:text-neutral-200",
-                                tag.variant === "outline" &&
-                                "border border-neutral-200 bg-transparent text-neutral-700 dark:border-neutral-700 dark:text-neutral-300 hover:bg-transparent hover:text-neutral-700 dark:hover:text-neutral-300 hover:border-neutral-200 dark:hover:border-neutral-700"
+                                "rounded-lg px-2.5 py-0.5 text-xs font-normal h-auto pointer-events-none select-none",
+                                normalizedTags[0].variant === "secondary" &&
+                                "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-transparent",
+                                normalizedTags[0].variant === "outline" &&
+                                "border border-neutral-200 bg-transparent text-neutral-700 dark:border-neutral-700 dark:text-neutral-300"
                             )}
                         >
-                            {tag.label}
+                            {normalizedTags[0].label}
                         </Badge>
-                    ))}
-                </CardFooter>
+                    </CardFooter>
+                ) : (
+                    // Multiple tags – horizontal marquee
+                    <CardFooter
+                        className="badge-ticker-wrap px-4 pt-3 pb-4 overflow-hidden w-full"
+                    >
+                        <div
+                            className="badge-ticker flex flex-row gap-2 w-max"
+                            style={{
+                                "--ticker-duration": `${normalizedTags.length * 2.5}s`,
+                            } as React.CSSProperties}
+                        >
+                            {/* Duplicate array for seamless infinite loop */}
+                            {[...normalizedTags, ...normalizedTags].map((tag, idx) => (
+                                <Badge
+                                    key={`${tag.label}-${idx}`}
+                                    variant={tag.variant}
+                                    className={cn(
+                                        "rounded-lg px-2.5 py-0.5 text-xs font-normal h-auto pointer-events-none select-none transition-none shrink-0 max-w-[220px]",
+                                        tag.variant === "secondary" &&
+                                        "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 border-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800",
+                                        tag.variant === "outline" &&
+                                        "border border-neutral-200 bg-transparent text-neutral-700 dark:border-neutral-700 dark:text-neutral-300 hover:bg-transparent hover:border-neutral-200"
+                                    )}
+                                >
+                                    <span className="truncate block">{tag.label}</span>
+                                </Badge>
+                            ))}
+                        </div>
+                    </CardFooter>
+                )}
             </Card>
         </a>
     )
