@@ -1,9 +1,9 @@
-const enum RoleName {
+export enum RoleName {
   CLIENT = "CLIENT",
   FREELANCER = "FREELANCER",
   ADMIN = "ADMIN",
 }
-interface User {
+export interface User {
   userId: string
   name: string
   username?: string
@@ -22,7 +22,7 @@ interface User {
 //   passwordHash: string
 // }
 
-interface FreelancerProfile {
+export interface FreelancerProfile {
   userId: string
   username: string
   tagline?: string
@@ -34,7 +34,7 @@ interface FreelancerProfile {
   socialLinks?: { website?: string; linkedin?: string; github?: string }
 }
 
-interface ClientProfile {
+export interface ClientProfile {
   userId: string
   companyName?: string
   billingAddress?: string

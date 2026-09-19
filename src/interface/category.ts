@@ -4,7 +4,6 @@ export interface Category {
   slug: string
 }
 
-
 const CATEGORIES: Category[] = [
   { id: "all", name: "All", slug: "all" },
   { id: "it-software", name: "IT & Software", slug: "it-software" },
