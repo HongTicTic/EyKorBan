@@ -1,4 +1,4 @@
-interface Project {
+export interface Project {
   projectId: string
   userId: string
   projectTitle: string
@@ -9,12 +9,12 @@ interface Project {
   pubDate: Date
 }
 
-interface Tag {
+export interface Tag {
   tagId: string
   tagName: string
 }
 
-const enum Category {
+export const enum Category {
   GENERAL = "GENERAL",
   TECH = "TECH",
   DESIGN = "DESIGN",

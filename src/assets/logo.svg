@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 140" width="540" height="140" fill="none">
+  <defs>
+    <!-- Crimson Rose Gradient (Primary Brand) -->
+    <linearGradient id="logo-rose" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF385C" />
+      <stop offset="60%" stop-color="#E11D48" />
+      <stop offset="100%" stop-color="#9F1239" />
+    </linearGradient>
+
+    <!-- Coral Fire Gradient (Accent) -->
+    <linearGradient id="logo-coral" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E11D48" />
+      <stop offset="50%" stop-color="#FB7185" />
+      <stop offset="100%" stop-color="#FFA4B2" />
+    </linearGradient>
+
+    <filter id="logo-subtle-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#E11D48" flood-opacity="0.2" />
+    </filter>
+  </defs>
+
+  <!-- EMBLEM ICON (Scaled to fit 140px height canvas) -->
+  <g transform="translate(14, 14) scale(0.40)" filter="url(#logo-subtle-glow)">
+    <!-- Ambient Light behind emblem -->
+    <circle cx="145" cy="140" r="105" fill="#E11D48" opacity="0.15" />
+
+    <!-- E Ribbon (Rose gradient) -->
+    <path d="M 132 10 
+             L 30 69 
+             C 22 74 18 82 18 91 
+             L 18 189 
+             C 18 198 22 206 30 211 
+             L 132 270 
+             C 136 272 140 269 140 264 
+             L 140 228 
+             C 140 224 137 221 133 219 
+             L 60 177 
+             C 54 173 52 168 52 161 
+             L 52 119 
+             C 52 112 54 107 60 103 
+             L 133 61 
+             C 137 59 140 56 140 52 
+             L 140 16 
+             C 140 11 136 8 132 10 Z" 
+          fill="url(#logo-rose)" />
+
+    <!-- E Center Prong (Adaptive currentColor) -->
+    <path d="M 54 126 
+             L 133 126 
+             C 137 126 140 129 140 133 
+             L 140 147 
+             C 140 151 137 154 133 154 
+             L 54 154 
+             C 50 154 48 151 48 147 
+             L 48 133 
+             C 48 129 50 126 54 126 Z" 
+          fill="currentColor" />
+
+    <!-- K Spine (Adaptive currentColor) -->
+    <path d="M 152 16 
+             C 152 11 156 8 161 9 
+             L 179 19 
+             C 183 21 186 25 186 30 
+             L 186 250 
+             C 186 255 183 259 179 261 
+             L 161 271 
+             C 156 272 152 269 152 264 
+             Z" 
+          fill="currentColor" />
+
+    <!-- K Upper Diagonal (Coral flame) -->
+    <path d="M 186 122 
+             L 258 69 
+             C 266 64 270 72 270 80 
+             L 270 112 
+             C 270 117 267 122 262 125 
+             L 220 149 
+             L 190 132 
+             Z" 
+          fill="url(#logo-coral)" />
+
+    <!-- K Lower Diagonal (Rose gradient) -->
+    <path d="M 190 148 
+             L 220 131 
+             L 262 155 
+             C 267 158 270 163 270 168 
+             L 270 200 
+             C 270 208 266 216 258 211 
+             L 186 158 
+             Z" 
+          fill="url(#logo-rose)" />
+
+    <!-- K Velocity Arrow (Adaptive currentColor) -->
+    <path d="M 222 140 
+             L 260 116 
+             C 264 113 268 116 268 120 
+             L 268 129 
+             L 284 138 
+             C 287 140 287 142 284 144 
+             L 268 153 
+             L 268 162 
+             C 268 166 264 169 260 166 
+             L 222 142 
+             C 219 141 219 139 222 140 Z" 
+          fill="currentColor" opacity="0.9" />
+
+    <circle cx="298" cy="140" r="3.5" fill="#FB7185" />
+  </g>
+
+  <!-- Elegant Vertical Divider -->
+  <line x1="152" y1="32" x2="152" y2="108" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.5" />
+
+  <!-- EyKorBan Wordmark -->
+  <text x="174" y="78" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif" font-size="44" font-weight="800" letter-spacing="-0.5" fill="currentColor">
+    EyKor<tspan fill="url(#logo-rose)">Ban</tspan>
+  </text>
+
+  <!-- Tagline: ANYTHING IS POSSIBLE -->
+  <text x="176" y="103" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif" font-size="11" font-weight="600" letter-spacing="4.5" fill="currentColor" opacity="0.65">
+    ANYTHING IS POSSIBLE
+  </text>
+</svg>
