@@ -1,8 +1,43 @@
+import { useMemo, useState } from "react"
+import Dropdown from "@/components/dropdown"
 import { ProjectCard } from "@/components/project-card"
 import { MOCK_PROJECT_CARDS, MOCK_USERS } from "@/mock-data/mock-data"
 
 const Home = () => {
-  const userMap = new Map(MOCK_USERS.map((user) => [user.userId, user]))
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedIndustry, setSelectedIndustry] = useState("all")
+  const [selectedSort, setSelectedSort] = useState("recent")
+
+  const userMap = useMemo(
+    () => new Map(MOCK_USERS.map((user) => [user.userId, user])),
+    []
+  )
+
+  const filteredProjects = useMemo(() => {
+    let list = [...MOCK_PROJECT_CARDS]
+
+    if (selectedCategory && selectedCategory !== "all") {
+      list = list.filter((p) => p.categoryId === selectedCategory)
+    }
+
+    if (selectedSort === "likes") {
+      list.sort((a, b) => b.likeCount - a.likeCount)
+    } else if (selectedSort === "views") {
+      list.sort((a, b) => b.viewCount - a.viewCount)
+    } else if (selectedSort === "oldest") {
+      list.sort(
+        (a, b) =>
+          new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime()
+      )
+    } else {
+      list.sort(
+        (a, b) =>
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      )
+    }
+
+    return list
+  }, [selectedCategory, selectedSort])
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -30,22 +65,29 @@ const Home = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {filteredProjects.map((project) => {
-          const author = userMap.get(project.freelanceId)
+        {filteredProjects.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-sm text-muted-foreground">
+            No projects found matching the selected filters.
+          </div>
+        ) : (
+          filteredProjects.map((project) => {
+            const author = userMap.get(project.freelanceId)
 
-          return (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              authorName={author?.name}
-              authorAvatar={author?.avatarUrl}
-              className="max-w-none"
-            />
-          )
-        })}
+            return (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                authorName={author?.name}
+                authorAvatar={author?.avatarUrl}
+                className="max-w-none"
+              />
+            )
+          })
+        )}
       </div>
     </div>
   )
 }
 
 export default Home
+
