@@ -1,6 +1,7 @@
 import * as React from "react"
-import { Search, Bookmark, Bell, Upload, Menu, X } from "lucide-react"
+import { Search, Bookmark, Bell, Upload, Menu, X, Sun, Moon } from "lucide-react"
 
+import { useTheme } from "@/components/theme-provider"
 import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,8 +14,20 @@ const navLinks = [
 ]
 
 export function Header() {
+  const { theme, setTheme } = useTheme()
   const [activeNav, setActiveNav] = React.useState("Explore")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
+
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+  const toggleTheme = () => {
+    setTheme(isDark ? "light" : "dark")
+  }
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/80 backdrop-blur-md shadow-xs transition-colors">
@@ -70,12 +83,16 @@ export function Header() {
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
-            aria-label="Saved collections"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
           >
-            <Bookmark className="size-4" />
+            {isDark ? (
+              <Sun className="size-4 text-amber-500 transition-transform" />
+            ) : (
+              <Moon className="size-4 transition-transform" />
+            )}
           </button>
-
           <button
             type="button"
             aria-label="Notifications"
@@ -84,14 +101,6 @@ export function Header() {
             <Bell className="size-4" />
             <span className="absolute top-2 right-2 size-1.5 rounded-full bg-primary" />
           </button>
-
-          <Button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 active:scale-[0.98] transition-all cursor-pointer"
-          >
-            <Upload className="size-4" />
-            <span className="hidden sm:inline">Upload</span>
-          </Button>
 
           <button
             type="button"
