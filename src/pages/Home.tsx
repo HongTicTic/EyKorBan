@@ -1,6 +1,10 @@
+import { ProjectCard } from "@/components/project-card"
+
 const Home = () => {
   return (
+    <>
     <div>Home</div>
+    </>
   )
 }
 
