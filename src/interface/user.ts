@@ -16,7 +16,6 @@ export interface User {
   lastLoginAt?: string
 }
 
-
 // interface UserCredentials {
 //   userId: string
 //   passwordHash: string

@@ -12,12 +12,16 @@ export const CATEGORIES: Category[] = [
   { id: "mobile-dev", name: "Mobile Development", slug: "mobile-development" },
   { id: "graphic-design", name: "Graphic Design", slug: "graphic-design" },
   { id: "branding", name: "Branding & Identity", slug: "branding-identity" },
-  { id: "digital-marketing", name: "Digital Marketing", slug: "digital-marketing" },
+  {
+    id: "digital-marketing",
+    name: "Digital Marketing",
+    slug: "digital-marketing",
+  },
   { id: "writing", name: "Writing & Translation", slug: "writing-translation" },
   { id: "video-animation", name: "Video & Animation", slug: "video-animation" },
   { id: "data-analytics", name: "Data & Analytics", slug: "data-analytics" },
   { id: "consulting", name: "Consulting", slug: "consulting" },
-];
+]
 
 export function getCategoryName(categoryId?: string): string {
   if (!categoryId) return ""
