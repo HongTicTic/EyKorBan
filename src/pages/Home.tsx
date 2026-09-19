@@ -15,8 +15,22 @@ const Home = () => {
         </p>
       </div>
 
+      <div className="mb-6 flex flex-col gap-2">
+        <Dropdown
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          selectedIndustry={selectedIndustry}
+          onIndustryChange={setSelectedIndustry}
+          selectedSort={selectedSort}
+          onSortChange={setSelectedSort}
+        />
+        <p className="text-xs text-muted-foreground">
+          Showing {filteredProjects.length} published projects · newest first
+        </p>
+      </div>
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {MOCK_PROJECT_CARDS.map((project) => {
+        {filteredProjects.map((project) => {
           const author = userMap.get(project.freelanceId)
 
           return (
