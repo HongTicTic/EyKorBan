@@ -1,8 +1,43 @@
+import { useMemo, useState } from "react"
+import Dropdown from "@/components/dropdown"
 import { ProjectCard } from "@/components/project-card"
 import { MOCK_PROJECT_CARDS, MOCK_USERS } from "@/mock-data/mock-data"
 
 const Home = () => {
-  const userMap = new Map(MOCK_USERS.map((user) => [user.userId, user]))
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedIndustry, setSelectedIndustry] = useState("all")
+  const [selectedSort, setSelectedSort] = useState("recent")
+
+  const userMap = useMemo(
+    () => new Map(MOCK_USERS.map((user) => [user.userId, user])),
+    []
+  )
+
+  const filteredProjects = useMemo(() => {
+    let list = [...MOCK_PROJECT_CARDS]
+
+    if (selectedCategory && selectedCategory !== "all") {
+      list = list.filter((p) => p.categoryId === selectedCategory)
+    }
+
+    if (selectedSort === "likes") {
+      list.sort((a, b) => b.likeCount - a.likeCount)
+    } else if (selectedSort === "views") {
+      list.sort((a, b) => b.viewCount - a.viewCount)
+    } else if (selectedSort === "oldest") {
+      list.sort(
+        (a, b) =>
+          new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime()
+      )
+    } else {
+      list.sort(
+        (a, b) =>
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      )
+    }
+
+    return list
+  }, [selectedCategory, selectedSort])
 
   return (
     <div className="container mx-auto px-4 py-8">
