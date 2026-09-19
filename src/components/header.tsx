@@ -1,9 +1,8 @@
 import * as React from "react"
-import { Search, Bookmark, Bell, Upload, Menu, X, Sun, Moon } from "lucide-react"
+import { Search, Bell, Menu, X, Sun, Moon } from "lucide-react"
 
 import { useTheme } from "@/components/theme-provider"
 import { Logo } from "@/components/logo"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
