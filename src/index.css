@@ -5,6 +5,25 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ── Badge horizontal ticker / marquee ──────────────────────── */
+@keyframes badgeTicker {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.badge-ticker {
+    animation: badgeTicker var(--ticker-duration, 4s) linear infinite;
+}
+
+.badge-ticker-wrap:hover .badge-ticker {
+    animation-play-state: paused;
+}
+
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;
@@ -118,13 +137,15 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
-  html {
-    @apply font-sans;
+
+    html {
+        @apply font-sans;
     }
 }
