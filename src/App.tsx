@@ -1,13 +1,12 @@
 import { Header } from "./components/header"
 import { ProjectCard } from "./components/project-card"
+import Home from "./pages/Home"
 
 export function App() {
   return (
-    <div>
-      <Header />
-      <ProjectCard />
-
-    </div>
+    <>
+      <Home/>
+    </>
   )
 }
 

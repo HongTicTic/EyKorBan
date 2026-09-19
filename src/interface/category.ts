@@ -1,10 +1,10 @@
 export interface Category {
-    id: string
+  id: string
   name: string
   slug: string
 }
 
-const CATEGORIES: Category[] = [
+export const CATEGORIES: Category[] = [
   { id: "all", name: "All", slug: "all" },
   { id: "it-software", name: "IT & Software", slug: "it-software" },
   { id: "uiux", name: "UI/UX Design", slug: "ui-ux-design" },
@@ -18,3 +18,9 @@ const CATEGORIES: Category[] = [
   { id: "data-analytics", name: "Data & Analytics", slug: "data-analytics" },
   { id: "consulting", name: "Consulting", slug: "consulting" },
 ];
+
+export function getCategoryName(categoryId?: string): string {
+  if (!categoryId) return ""
+  const found = CATEGORIES.find((c) => c.id === categoryId)
+  return found ? found.name : categoryId
+}
