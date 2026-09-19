@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { ProjectCard } from "./components/project-card"
 
 export function App() {
   return (
@@ -13,6 +14,7 @@ export function App() {
         <div className="font-mono text-xs text-muted-foreground">
           (Press <kbd>d</kbd> to toggle dark mode)
         </div>
+        <ProjectCard />
       </div>
     </div>
   )
