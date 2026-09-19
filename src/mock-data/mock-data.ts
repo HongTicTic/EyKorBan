@@ -1,5 +1,6 @@
 import { ProjectCard } from "@/interface/projectCard"
-import { User, RoleName } from "@/interface/user"
+import { User, RoleName, FreelancerProfile } from "@/interface/user"
+import { Job } from "@/interface/job"
 
 export const MOCK_PROJECT_CARDS: ProjectCard[] = [
   {
@@ -244,5 +245,192 @@ export const MOCK_USERS: User[] = [
     createdAt: "2025-12-01T09:00:00Z",
     updatedAt: "2026-09-09T15:30:00Z",
     lastLoginAt: "2026-09-19T13:00:00Z",
+  },
+]
+
+export const CURRENT_USER_ID = "u1"
+
+export const MOCK_FREELANCER_PROFILES: FreelancerProfile[] = [
+  {
+    userId: "u1",
+    username: "alexvance",
+    tagline: "Full-stack engineer for data-heavy web platforms",
+    bio: "I design and build web platforms that turn messy data into clear dashboards. Eight years shipping React and Node products for analytics and enterprise teams, from first prototype to production scale.",
+    skills: ["React", "TypeScript", "Node.js", "PostgreSQL", "Data Viz"],
+    hourlyRate: 85,
+    currency: "USD",
+    publicProfileEnabled: true,
+    socialLinks: {
+      website: "https://alexvance.dev",
+      github: "https://github.com/alexvance",
+    },
+  },
+  {
+    userId: "u2",
+    username: "sarahchen",
+    tagline: "Mobile designer and developer for fintech",
+    bio: "I make money apps people actually trust. I work across product design and native development, so the handoff between Figma and Swift or Kotlin never gets lost.",
+    skills: ["Swift", "Kotlin", "React Native", "Fintech UX"],
+    hourlyRate: 95,
+    currency: "USD",
+    publicProfileEnabled: true,
+    socialLinks: { linkedin: "https://linkedin.com/in/sarahchen" },
+  },
+  {
+    userId: "u3",
+    username: "marcus_design",
+    tagline: "Brand identity designer for creative studios",
+    bio: "Identity systems with a point of view. I help studios and agencies find a visual voice, then document it so the whole team can use it.",
+    skills: ["Branding", "Logo Design", "Typography", "Art Direction"],
+    hourlyRate: 70,
+    currency: "USD",
+    publicProfileEnabled: true,
+    socialLinks: { website: "https://marcus.design" },
+  },
+  {
+    userId: "u4",
+    username: "davidkim_cloud",
+    tagline: "Cloud architect moving teams to AWS and GCP",
+    bio: "I plan and run cloud migrations with zero-downtime cutovers, then leave teams with infrastructure as code they can own.",
+    skills: ["AWS", "Terraform", "Kubernetes", "DevOps"],
+    hourlyRate: 110,
+    currency: "USD",
+    publicProfileEnabled: true,
+    socialLinks: { linkedin: "https://linkedin.com/in/davidkim" },
+  },
+  {
+    userId: "u5",
+    username: "elena_arts",
+    tagline: "Editorial designer with a Bauhaus streak",
+    bio: "Grids, bold type and primary colours. I design magazines, reports and editorial systems for print and screen.",
+    skills: ["Editorial Design", "Layout", "Print", "Illustration"],
+    hourlyRate: 65,
+    currency: "USD",
+    publicProfileEnabled: true,
+    socialLinks: { website: "https://elenarostova.art" },
+  },
+  {
+    userId: "u6",
+    username: "liam_dev",
+    tagline: "Creative developer for luxury e-commerce",
+    bio: "I build storefronts that feel like the brand: smooth motion, fast pages and checkout flows that convert.",
+    skills: ["Shopify", "Next.js", "GSAP", "Three.js"],
+    hourlyRate: 80,
+    currency: "USD",
+    publicProfileEnabled: true,
+    socialLinks: { github: "https://github.com/liamdev" },
+  },
+  {
+    userId: "u7",
+    username: "mayapatel_ui",
+    tagline: "UI/UX designer for AI and developer tools",
+    bio: "I simplify complex tools. Most of my work is design systems and interaction design for AI products and developer platforms.",
+    skills: ["Figma", "Design Systems", "Prototyping", "User Research"],
+    hourlyRate: 90,
+    currency: "USD",
+    publicProfileEnabled: true,
+    socialLinks: { website: "https://mayapatel.design" },
+  },
+  {
+    userId: "u8",
+    username: "carlos_growth",
+    tagline: "Growth marketer turning data into campaigns",
+    bio: "Campaign strategy backed by numbers. I run SEO, paid acquisition and reporting for early-stage brands.",
+    skills: ["SEO", "Paid Ads", "Analytics", "Copywriting"],
+    hourlyRate: 60,
+    currency: "USD",
+    publicProfileEnabled: true,
+    socialLinks: { linkedin: "https://linkedin.com/in/carlosmendez" },
+  },
+]
+
+export const MOCK_JOBS: Job[] = [
+  {
+    id: "job-001",
+    clientId: "u9",
+    title: "Landing page for a fintech savings app",
+    description:
+      "We are launching a round-up savings app and need a high-converting landing page with a clear signup flow. Design and build in React; copy is ready.",
+    categoryId: "web-dev",
+    industryId: "fintech",
+    status: "open",
+    publishedAt: "2026-09-19T08:00:00Z",
+  },
+  {
+    id: "job-002",
+    clientId: "u9",
+    title: "Brand identity for an organic skincare line",
+    description:
+      "New skincare brand looking for a full identity: logo, colour palette, typography and packaging direction for five products. Earthy, calm and premium.",
+    categoryId: "branding",
+    industryId: "ecommerce",
+    status: "open",
+    publishedAt: "2026-09-18T13:30:00Z",
+  },
+  {
+    id: "job-003",
+    clientId: "u9",
+    title: "iOS app redesign for a telehealth startup",
+    description:
+      "Our booking and video-visit flows are dated and confusing for older patients. We need a redesign focused on accessibility, then help implementing it in SwiftUI.",
+    categoryId: "mobile-dev",
+    industryId: "healthcare",
+    status: "open",
+    publishedAt: "2026-09-17T10:15:00Z",
+  },
+  {
+    id: "job-004",
+    clientId: "u9",
+    title: "Attendance dashboard for a school network",
+    description:
+      "Build a dashboard that shows attendance trends across twelve schools, with filters by grade and term. Data comes from a CSV export updated weekly.",
+    categoryId: "data-analytics",
+    industryId: "education",
+    status: "open",
+    publishedAt: "2026-09-16T09:00:00Z",
+  },
+  {
+    id: "job-005",
+    clientId: "u9",
+    title: "Explainer video for a property listing platform",
+    description:
+      "A 60-second animated explainer showing how buyers find and book viewings on our platform. Script is drafted; we need storyboard, animation and voice-over.",
+    categoryId: "video-animation",
+    industryId: "real-estate",
+    status: "open",
+    publishedAt: "2026-09-15T16:45:00Z",
+  },
+  {
+    id: "job-006",
+    clientId: "u9",
+    title: "Design system audit for a SaaS product",
+    description:
+      "Our Figma library has drifted from the code. Audit components, document the gaps and propose a cleaned-up set of tokens and core components.",
+    categoryId: "uiux",
+    industryId: "tech",
+    status: "open",
+    publishedAt: "2026-09-14T11:20:00Z",
+  },
+  {
+    id: "job-007",
+    clientId: "u9",
+    title: "SEO content plan for an online bookstore",
+    description:
+      "Plan and write twelve long-form articles around reading lists and gift guides, with keyword research and internal linking recommendations.",
+    categoryId: "writing",
+    industryId: "ecommerce",
+    status: "open",
+    publishedAt: "2026-09-12T07:30:00Z",
+  },
+  {
+    id: "job-008",
+    clientId: "u9",
+    title: "Podcast cover art and social templates",
+    description:
+      "Cover art for a weekly film podcast plus editable templates for episode announcements on Instagram and YouTube.",
+    categoryId: "graphic-design",
+    industryId: "entertainment",
+    status: "closed",
+    publishedAt: "2026-09-10T15:00:00Z",
   },
 ]

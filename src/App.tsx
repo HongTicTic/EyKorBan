@@ -1,6 +1,9 @@
 import { Header } from "./components/header"
+import FindWork from "./pages/FindWork"
+import HireCreatives from "./pages/HireCreatives"
 import Home from "./pages/Home"
 import Login from "./pages/Login"
+import Profile from "./pages/Profile"
 import Signup from "./pages/Signup"
 import { Footer } from "./components/footer"
 import { Sidebar } from "./components/sidebar"
@@ -19,6 +22,16 @@ const demoFreelancer: User = {
   updatedAt: "2024-01-01T00:00:00Z",
 }
 
+function getPage(path: string) {
+  if (path === "/hire-creatives") return <HireCreatives />
+  if (path === "/find-work") return <FindWork />
+  if (path === "/profile") return <Profile />
+  if (path.startsWith("/profile/")) {
+    return <Profile username={decodeURIComponent(path.split("/")[2])} />
+  }
+  return <Home />
+}
+
 export function App() {
   const path = window.location.pathname
 
@@ -33,9 +46,7 @@ export function App() {
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-y-auto">
         <Header />
-        <main className="flex-1">
-          <Home />
-        </main>
+        <main className="flex-1">{getPage(path)}</main>
         <Footer />
       </div>
     </div>

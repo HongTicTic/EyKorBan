@@ -7,14 +7,14 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navLinks = [
-  { label: "Explore", href: "#" },
-  { label: "Hire Creatives", href: "#" },
-  { label: "Find Work", href: "#" },
+  { label: "Explore", href: "/" },
+  { label: "Hire Creatives", href: "/hire-creatives" },
+  { label: "Find Work", href: "/find-work" },
 ]
 
 export function Header() {
   const { theme, setTheme } = useTheme()
-  const [activeNav, setActiveNav] = React.useState("Explore")
+  const currentPath = window.location.pathname
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
 
   const isDark =
@@ -33,7 +33,7 @@ export function Header() {
       <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex flex-1 items-center gap-6 md:gap-8 max-w-xl">
           <a
-            href="#"
+            href="/"
             className="group flex shrink-0 items-center no-underline outline-none"
           >
             <Logo className="h-7 transition-transform group-hover:scale-105" />
@@ -58,15 +58,12 @@ export function Header() {
 
         <nav className="hidden md:flex items-center gap-6 lg:gap-7">
           {navLinks.map((link) => {
-            const isActive = activeNav === link.label
+            const isActive = currentPath === link.href
             return (
               <a
                 key={link.label}
                 href={link.href}
-                onClick={(e) => {
-                  e.preventDefault()
-                  setActiveNav(link.label)
-                }}
+                aria-current={isActive ? "page" : undefined}
                 className={`pb-1 text-sm transition-colors ${
                   isActive
                     ? "border-b-2 border-primary font-medium text-foreground"
@@ -101,19 +98,22 @@ export function Header() {
             <span className="absolute top-2 right-2 size-1.5 rounded-full bg-primary" />
           </button>
 
-          <button
-            type="button"
-            aria-label="User profile"
-            className="ml-0.5 rounded-full p-0.5 ring-1 ring-border hover:ring-primary transition-all cursor-pointer"
+          <a
+            href="/profile"
+            aria-label="Your profile"
+            aria-current={currentPath === "/profile" ? "page" : undefined}
+            className={`ml-0.5 rounded-full p-0.5 ring-1 hover:ring-primary transition-all cursor-pointer ${
+              currentPath === "/profile" ? "ring-primary" : "ring-border"
+            }`}
           >
             <Avatar className="size-8">
               <AvatarImage
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
                 alt="User profile avatar"
               />
-              <AvatarFallback className="text-xs font-medium">SC</AvatarFallback>
+              <AvatarFallback className="text-xs font-medium">AV</AvatarFallback>
             </Avatar>
-          </button>
+          </a>
 
           <button
             type="button"
@@ -144,13 +144,9 @@ export function Header() {
               <a
                 key={link.label}
                 href={link.href}
-                onClick={(e) => {
-                  e.preventDefault()
-                  setActiveNav(link.label)
-                  setIsMobileMenuOpen(false)
-                }}
+                aria-current={currentPath === link.href ? "page" : undefined}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  activeNav === link.label
+                  currentPath === link.href
                     ? "bg-primary/10 text-primary"
                     : "text-foreground hover:bg-muted"
                 }`}
