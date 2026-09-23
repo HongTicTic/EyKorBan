@@ -132,10 +132,12 @@ export function useOfflineQueue(handlers: OperationHandlers) {
     window.addEventListener("online", handleOnline)
     window.addEventListener("offline", handleOffline)
 
-    // Anything left from a previous session goes out now.
-    if (navigator.onLine) void flush()
+    // Anything left from a previous session goes out now — but on a timer, so
+    // replaying the outbox never delays the first paint.
+    const initial = navigator.onLine ? setTimeout(() => void flush(), 0) : undefined
 
     return () => {
+      if (initial) clearTimeout(initial)
       window.removeEventListener("online", handleOnline)
       window.removeEventListener("offline", handleOffline)
     }
