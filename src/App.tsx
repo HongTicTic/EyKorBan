@@ -9,6 +9,7 @@ import { Footer } from "./components/footer"
 import { Sidebar } from "./components/sidebar"
 import { RoleName } from "./interface/user"
 import type { User } from "./interface/user"
+import { DataProvider } from "./lib/data-context"
 
 // Demo user — replace with real auth context when auth is ready
 const demoFreelancer: User = {
@@ -39,7 +40,8 @@ export function App() {
   if (path === "/signup") return <Signup />
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <DataProvider>
+      <div className="flex h-screen overflow-hidden">
       {/* Sidebar — rendered only for portal roles */}
       <Sidebar user={demoFreelancer} />
 
@@ -49,7 +51,8 @@ export function App() {
         <main className="flex-1">{getPage(path)}</main>
         <Footer />
       </div>
-    </div>
+      </div>
+    </DataProvider>
   )
 }
 

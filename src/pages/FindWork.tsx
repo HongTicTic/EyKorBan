@@ -9,12 +9,7 @@ import {
 import { EmptyState } from "@/components/empty-state"
 import { JobCard } from "@/components/job-card"
 import { Button } from "@/components/ui/button"
-import { MOCK_JOBS } from "@/mock-data/mock-data"
-
-const openJobs = MOCK_JOBS.filter((job) => job.status === "open").sort(
-  (a, b) =>
-    new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-)
+import { useData } from "@/lib/use-data"
 
 function FilterChip({
   label,
@@ -39,6 +34,16 @@ function FilterChip({
 const FindWork = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIndustry, setSelectedIndustry] = useState("all")
+  const { jobs } = useData()
+
+  const openJobs = useMemo(
+    () =>
+      jobs.filter((job) => job.status === "open").sort(
+        (a, b) =>
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      ),
+    [jobs]
+  )
 
   const visibleJobs = useMemo(
     () =>
@@ -47,7 +52,7 @@ const FindWork = () => {
           (selectedCategory === "all" || job.categoryId === selectedCategory) &&
           (selectedIndustry === "all" || job.industryId === selectedIndustry)
       ),
-    [selectedCategory, selectedIndustry]
+    [openJobs, selectedCategory, selectedIndustry]
   )
 
   const categoryLabel = DEFAULT_CATEGORY_OPTIONS.find(

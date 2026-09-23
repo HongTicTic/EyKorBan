@@ -1,20 +1,21 @@
 import { useMemo, useState } from "react"
 import Dropdown from "@/components/dropdown"
 import { ProjectCard } from "@/components/project-card"
-import { MOCK_PROJECT_CARDS, MOCK_USERS } from "@/mock-data/mock-data"
+import { useData } from "@/lib/use-data"
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIndustry, setSelectedIndustry] = useState("all")
   const [selectedSort, setSelectedSort] = useState("recent")
+  const { projectCards, users } = useData()
 
   const userMap = useMemo(
-    () => new Map(MOCK_USERS.map((user) => [user.userId, user])),
-    []
+    () => new Map(users.map((user) => [user.userId, user])),
+    [users]
   )
 
   const filteredProjects = useMemo(() => {
-    let list = [...MOCK_PROJECT_CARDS]
+    let list = [...projectCards]
 
     if (selectedCategory && selectedCategory !== "all") {
       list = list.filter((p) => p.categoryId === selectedCategory)
@@ -37,7 +38,7 @@ const Home = () => {
     }
 
     return list
-  }, [selectedCategory, selectedSort])
+  }, [projectCards, selectedCategory, selectedSort])
 
   return (
     <div className="container mx-auto px-4 py-8">

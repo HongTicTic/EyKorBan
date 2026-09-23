@@ -8,12 +8,8 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { RoleName } from "@/interface/user"
 import { formatCompact, formatMonthYear, getInitials } from "@/lib/format"
 import { cn } from "@/lib/utils"
-import {
-  CURRENT_USER_ID,
-  MOCK_FREELANCER_PROFILES,
-  MOCK_PROJECT_CARDS,
-  MOCK_USERS,
-} from "@/mock-data/mock-data"
+import { CURRENT_USER_ID } from "@/mock-data/mock-data"
+import { useData } from "@/lib/use-data"
 
 const ROLE_LABELS: Record<RoleName, string> = {
   [RoleName.FREELANCER]: "Freelancer",
@@ -37,9 +33,10 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 const Profile = ({ username }: { username?: string }) => {
+  const { users, freelancerProfiles, projectCards } = useData()
   const user = username
-    ? MOCK_USERS.find((candidate) => candidate.username === username)
-    : MOCK_USERS.find((candidate) => candidate.userId === CURRENT_USER_ID)
+    ? users.find((candidate) => candidate.username === username)
+    : users.find((candidate) => candidate.userId === CURRENT_USER_ID)
 
   if (!user) {
     return (
@@ -61,10 +58,10 @@ const Profile = ({ username }: { username?: string }) => {
     )
   }
 
-  const profile = MOCK_FREELANCER_PROFILES.find(
+  const profile = freelancerProfiles.find(
     (candidate) => candidate.userId === user.userId
   )
-  const works = MOCK_PROJECT_CARDS.filter(
+  const works = projectCards.filter(
     (card) => card.freelanceId === user.userId
   )
   const isOwnProfile = user.userId === CURRENT_USER_ID

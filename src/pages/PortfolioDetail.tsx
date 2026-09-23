@@ -28,7 +28,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { ProjectCard } from "@/components/project-card"
-import { MOCK_PROJECT_CARDS, MOCK_USERS } from "@/mock-data/mock-data"
+import { useData } from "@/lib/use-data"
 import { getCategoryName } from "@/interface/category"
 
 // ============================================================================
@@ -70,24 +70,23 @@ export function PortfolioDetail({
   onSendInquiry,
   className,
 }: PortfolioDetailProps) {
-  // Map of users from home mock data
+  const { users, projectCards } = useData()
+
   const userMap = React.useMemo(
-    () => new Map(MOCK_USERS.map((user) => [user.userId, user])),
-    []
+    () => new Map(users.map((user) => [user.userId, user])),
+    [users]
   )
 
-  // Resolve current project from home mock data
   const project = React.useMemo(() => {
     return (
-      MOCK_PROJECT_CARDS.find((p) => p.id === projectId) ??
-      MOCK_PROJECT_CARDS[0]
+      projectCards.find((p) => p.id === projectId) ?? projectCards[0]
     )
-  }, [projectId])
+  }, [projectCards, projectId])
 
   // Resolve project author
   const author = React.useMemo(() => {
-    return userMap.get(project.freelanceId) ?? MOCK_USERS[0]
-  }, [project.freelanceId, userMap])
+    return userMap.get(project.freelanceId) ?? users[0]
+  }, [project.freelanceId, userMap, users])
 
   const categoryName = getCategoryName(project.categoryId)
 
@@ -183,19 +182,18 @@ export function PortfolioDetail({
     }
   }, [project.publishedAt])
 
-  // Related projects using Home screen standard MOCK_PROJECT_CARDS
   const moreProjects = React.useMemo(() => {
-    const fromSameAuthor = MOCK_PROJECT_CARDS.filter(
+    const fromSameAuthor = projectCards.filter(
       (p) => p.freelanceId === project.freelanceId && p.id !== project.id
     )
     if (fromSameAuthor.length >= 4) {
       return fromSameAuthor.slice(0, 4)
     }
-    const otherProjects = MOCK_PROJECT_CARDS.filter(
+    const otherProjects = projectCards.filter(
       (p) => p.id !== project.id && !fromSameAuthor.some((f) => f.id === p.id)
     )
     return [...fromSameAuthor, ...otherProjects].slice(0, 4)
-  }, [project.id, project.freelanceId])
+  }, [project.id, project.freelanceId, projectCards])
 
   return (
     <div

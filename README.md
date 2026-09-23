@@ -1,3 +1,16 @@
+# EyKorBan
+
+## Supabase setup
+
+The browser client uses Supabase's publishable key. Copy `.env.example` to `.env.local` and fill in the project URL and publishable key from the Supabase Connect dialog:
+
+```bash
+cp .env.example .env.local
+```
+
+Never put a `sb_secret_...` key or the legacy `service_role` key in Vite environment variables. Those keys bypass Row Level Security and must remain server-side.
+
+Run `supabase/migrations/001_initial_schema.sql` in the Supabase SQL editor before loading the repository functions. Until the two `VITE_SUPABASE_*` variables are configured, the app continues to use the existing static data as a local fallback.
 # React + TypeScript + Vite + shadcn/ui
 
 This is a template for a new Vite project with React, TypeScript, and shadcn/ui.

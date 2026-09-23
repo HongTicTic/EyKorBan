@@ -6,11 +6,7 @@ import { EmptyState } from "@/components/empty-state"
 import { FreelancerCard } from "@/components/freelancer-card"
 import { Button } from "@/components/ui/button"
 import { RoleName } from "@/interface/user"
-import {
-  MOCK_FREELANCER_PROFILES,
-  MOCK_PROJECT_CARDS,
-  MOCK_USERS,
-} from "@/mock-data/mock-data"
+import { useData } from "@/lib/use-data"
 
 const SORT_OPTIONS = [
   { label: "Most liked", value: "likes" },
@@ -18,24 +14,29 @@ const SORT_OPTIONS = [
   { label: "Rate: high to low", value: "rate-desc" },
 ]
 
-const creatives = MOCK_USERS.filter(
-  (user) => user.role === RoleName.FREELANCER
-).flatMap((user) => {
-  const profile = MOCK_FREELANCER_PROFILES.find(
-    (candidate) => candidate.userId === user.userId
-  )
-  if (!profile?.publicProfileEnabled) return []
-
-  const works = MOCK_PROJECT_CARDS.filter(
-    (card) => card.freelanceId === user.userId
-  )
-  const totalLikes = works.reduce((sum, work) => sum + work.likeCount, 0)
-  return [{ user, profile, works, totalLikes }]
-})
-
 const HireCreatives = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedSort, setSelectedSort] = useState("likes")
+  const { users, freelancerProfiles, projectCards } = useData()
+
+  const creatives = useMemo(
+    () =>
+      users
+        .filter((user) => user.role === RoleName.FREELANCER)
+        .flatMap((user) => {
+          const profile = freelancerProfiles.find(
+            (candidate) => candidate.userId === user.userId
+          )
+          if (!profile?.publicProfileEnabled) return []
+
+          const works = projectCards.filter(
+            (card) => card.freelanceId === user.userId
+          )
+          const totalLikes = works.reduce((sum, work) => sum + work.likeCount, 0)
+          return [{ user, profile, works, totalLikes }]
+        }),
+    [freelancerProfiles, projectCards, users]
+  )
 
   const visibleCreatives = useMemo(() => {
     const list =
@@ -57,7 +58,7 @@ const HireCreatives = () => {
     }
 
     return list
-  }, [selectedCategory, selectedSort])
+  }, [creatives, selectedCategory, selectedSort])
 
   return (
     <div className="container mx-auto px-4 py-8">
