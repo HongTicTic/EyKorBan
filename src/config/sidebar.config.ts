@@ -1,122 +1,57 @@
-import {
-    LayoutDashboard,
-    FolderOpen,
-    PlusCircle,
-    MessageSquare,
-    BarChart2,
-    Settings,
-    ShieldCheck,
-    Users,
-    Flag,
-    Database,
-} from "lucide-react"
-import { RoleName } from "@/interface/user"
-import type { SidebarConfig } from "@/interface/sidebar"
+import { Briefcase, FolderOpen, PlusCircle, UserRound } from "lucide-react"
 
-// ── Freelancer sidebar config ──────────────────────────────────────────────
+import type { SidebarConfig } from "@/interface/sidebar"
+import { RoleName } from "@/interface/user"
+
+/**
+ * Only routes that exist belong here. The previous config linked to eleven
+ * screens (/dashboard, /messages, /analytics, /admin/*) that were never built,
+ * so every sidebar click silently did nothing.
+ */
+
 export const freelancerSidebarConfig: SidebarConfig = {
-    role: RoleName.FREELANCER,
-    brandLabel: "Freelancer portal",
-    groups: [
-        {
-            items: [
-                {
-                    label: "Dashboard",
-                    href: "/dashboard",
-                    icon: LayoutDashboard,
-                },
-                {
-                    label: "My work",
-                    href: "/my-work",
-                    icon: FolderOpen,
-                },
-                {
-                    label: "New work",
-                    href: "/new-work",
-                    icon: PlusCircle,
-                },
-            ],
-        },
-        {
-            heading: "Communication",
-            items: [
-                {
-                    label: "Messages",
-                    href: "/messages",
-                    icon: MessageSquare,
-                    badge: 3,
-                },
-            ],
-        },
-        {
-            heading: "Insights",
-            items: [
-                {
-                    label: "Analytics",
-                    href: "/analytics",
-                    icon: BarChart2,
-                },
-                {
-                    label: "Settings",
-                    href: "/settings",
-                    icon: Settings,
-                },
-            ],
-        },
-    ],
+  role: RoleName.FREELANCER,
+  brandLabel: "Freelancer portal",
+  groups: [
+    {
+      items: [
+        { label: "My work", href: "/my-work", icon: FolderOpen },
+        { label: "New work", href: "/work/new", icon: PlusCircle },
+      ],
+    },
+    {
+      heading: "Account",
+      items: [{ label: "My profile", href: "/profile", icon: UserRound }],
+    },
+  ],
 }
 
-// ── Admin sidebar config (stub — implement later) ──────────────────────────
-export const adminSidebarConfig: SidebarConfig = {
-    role: RoleName.ADMIN,
-    brandLabel: "Admin panel",
-    groups: [
-        {
-            items: [
-                {
-                    label: "Overview",
-                    href: "/admin",
-                    icon: ShieldCheck,
-                },
-                {
-                    label: "Users",
-                    href: "/admin/users",
-                    icon: Users,
-                },
-                {
-                    label: "Reports",
-                    href: "/admin/reports",
-                    icon: Flag,
-                },
-            ],
-        },
-        {
-            heading: "System",
-            items: [
-                {
-                    label: "Database",
-                    href: "/admin/database",
-                    icon: Database,
-                },
-                {
-                    label: "Settings",
-                    href: "/admin/settings",
-                    icon: Settings,
-                },
-            ],
-        },
-    ],
+export const clientSidebarConfig: SidebarConfig = {
+  role: RoleName.CLIENT,
+  brandLabel: "Client portal",
+  groups: [
+    {
+      items: [
+        { label: "My jobs", href: "/my-jobs", icon: Briefcase },
+        { label: "Post a job", href: "/jobs/new", icon: PlusCircle },
+      ],
+    },
+    {
+      heading: "Account",
+      items: [{ label: "My profile", href: "/profile", icon: UserRound }],
+    },
+  ],
 }
 
 // ── Role → config lookup ───────────────────────────────────────────────────
-// CLIENT is intentionally excluded — they use the public-facing layout only.
+// ADMIN has no portal: administrative moderation is excluded from the MVP.
 export const sidebarConfigByRole: Partial<Record<RoleName, SidebarConfig>> = {
-    [RoleName.FREELANCER]: freelancerSidebarConfig,
-    [RoleName.ADMIN]: adminSidebarConfig,
+  [RoleName.FREELANCER]: freelancerSidebarConfig,
+  [RoleName.CLIENT]: clientSidebarConfig,
 }
 
 /** Roles that are allowed to see the sidebar. */
 export const SIDEBAR_ROLES = new Set<RoleName>([
-    RoleName.FREELANCER,
-    RoleName.ADMIN,
+  RoleName.FREELANCER,
+  RoleName.CLIENT,
 ])

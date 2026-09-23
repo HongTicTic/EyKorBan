@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 
 export interface LoginFormValues {
   email: string
@@ -16,6 +17,10 @@ export interface LoginFormValues {
 
 interface LoginFormProps {
   onSubmit?: (values: LoginFormValues) => void
+  /** Disables the form and shows a spinner while the request is in flight. */
+  isSubmitting?: boolean
+  /** Message shown above the submit button when sign-in fails. */
+  error?: string | null
   signupHref?: string
   forgotPasswordHref?: string
   browseHref?: string
@@ -23,6 +28,8 @@ interface LoginFormProps {
 
 export function LoginForm({
   onSubmit,
+  isSubmitting = false,
+  error = null,
   signupHref = "/signup",
   forgotPasswordHref = "/forgot-password",
   browseHref = "/",
@@ -31,6 +38,8 @@ export function LoginForm({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (isSubmitting) return
+
     const data = new FormData(event.currentTarget)
     onSubmit?.({
       email: String(data.get("email")),
@@ -102,12 +111,31 @@ export function LoginForm({
             </FieldLabel>
           </Field>
 
+          {error && (
+            <p
+              role="alert"
+              className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+            >
+              {error}
+            </p>
+          )}
+
           <Button
             type="submit"
+            disabled={isSubmitting}
             className="h-12 w-full rounded-xl text-base font-semibold"
           >
-            Sign in
-            <ArrowRight data-icon="inline-end" />
+            {isSubmitting ? (
+              <>
+                <Spinner data-icon="inline-start" />
+                Signing in…
+              </>
+            ) : (
+              <>
+                Sign in
+                <ArrowRight data-icon="inline-end" />
+              </>
+            )}
           </Button>
 
           <a

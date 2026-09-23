@@ -149,3 +149,38 @@
         @apply font-sans;
     }
 }
+
+/* ── Mobile / PWA ──────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    /* Stops iOS Safari enlarging text when the phone is rotated. */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    /* The page scrolls inside the layout, so bouncing the body just reveals
+       the background behind a standalone PWA. */
+    overscroll-behavior-y: none;
+  }
+
+  /* viewport-fit=cover paints under the notch; put the header back below it. */
+  header {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* iOS zooms the page when a focused input is under 16px. */
+  @media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+
+  /* Touch targets get a tap highlight on iOS that reads as a rendering bug. */
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

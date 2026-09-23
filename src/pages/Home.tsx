@@ -1,44 +1,34 @@
-import { useMemo, useState } from "react"
+import { useState } from "react"
+import { AlertTriangle, SearchX } from "lucide-react"
+
 import Dropdown from "@/components/dropdown"
+import { EmptyState } from "@/components/empty-state"
 import { ProjectCard } from "@/components/project-card"
-import { useData } from "@/lib/use-data"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
+import { useAsyncData } from "@/hooks/use-async-data"
+import { listPublishedWork, type PortfolioSort } from "@/services/portfolio"
+
+const SKELETON_COUNT = 8
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIndustry, setSelectedIndustry] = useState("all")
-  const [selectedSort, setSelectedSort] = useState("recent")
-  const { projectCards, users } = useData()
+  const [selectedSort, setSelectedSort] = useState<PortfolioSort>("recent")
 
-  const userMap = useMemo(
-    () => new Map(users.map((user) => [user.userId, user])),
-    [users]
+  // Filtering and ordering run in Postgres, so changing a filter is a query,
+  // not a client-side re-sort of everything ever published.
+  const { data, error, isLoading, refetch } = useAsyncData(
+    () =>
+      listPublishedWork({
+        categoryId: selectedCategory,
+        industryId: selectedIndustry,
+        sort: selectedSort,
+      }),
+    [selectedCategory, selectedIndustry, selectedSort]
   )
 
-  const filteredProjects = useMemo(() => {
-    let list = [...projectCards]
-
-    if (selectedCategory && selectedCategory !== "all") {
-      list = list.filter((p) => p.categoryId === selectedCategory)
-    }
-
-    if (selectedSort === "likes") {
-      list.sort((a, b) => b.likeCount - a.likeCount)
-    } else if (selectedSort === "views") {
-      list.sort((a, b) => b.viewCount - a.viewCount)
-    } else if (selectedSort === "oldest") {
-      list.sort(
-        (a, b) =>
-          new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime()
-      )
-    } else {
-      list.sort(
-        (a, b) =>
-          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-      )
-    }
-
-    return list
-  }, [projectCards, selectedCategory, selectedSort])
+  const projects = data ?? []
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -58,37 +48,73 @@ const Home = () => {
           selectedIndustry={selectedIndustry}
           onIndustryChange={setSelectedIndustry}
           selectedSort={selectedSort}
-          onSortChange={setSelectedSort}
+          onSortChange={(sort) => setSelectedSort(sort as PortfolioSort)}
         />
-        <p className="text-xs text-muted-foreground">
-          Showing {filteredProjects.length} published projects · newest first
+        <p className="flex items-center gap-2 text-xs text-muted-foreground">
+          {isLoading ? (
+            <>
+              <Spinner className="size-3" />
+              Loading published projects…
+            </>
+          ) : (
+            <>Showing {projects.length} published projects</>
+          )}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {filteredProjects.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-sm text-muted-foreground">
-            No projects found matching the selected filters.
-          </div>
-        ) : (
-          filteredProjects.map((project) => {
-            const author = userMap.get(project.freelanceId)
-
-            return (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                authorName={author?.name}
-                authorAvatar={author?.avatarUrl}
-                className="max-w-none"
-              />
-            )
-          })
-        )}
-      </div>
+      {error ? (
+        <EmptyState
+          icon={AlertTriangle}
+          title="Could not load projects"
+          description={error}
+          action={
+            <Button variant="outline" onClick={refetch}>
+              Try again
+            </Button>
+          }
+        />
+      ) : isLoading ? (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+            <div
+              key={index}
+              className="h-64 animate-pulse rounded-xl bg-muted"
+              aria-hidden
+            />
+          ))}
+        </div>
+      ) : projects.length === 0 ? (
+        <EmptyState
+          icon={SearchX}
+          title="No projects match these filters"
+          description="Try a different category or industry."
+          action={
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedCategory("all")
+                setSelectedIndustry("all")
+              }}
+            >
+              Reset filters
+            </Button>
+          }
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {projects.map(({ card, author }) => (
+            <ProjectCard
+              key={card.id}
+              project={card}
+              authorName={author?.name}
+              authorAvatar={author?.avatarUrl}
+              className="max-w-none"
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
 export default Home
-
