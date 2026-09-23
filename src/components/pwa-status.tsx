@@ -1,8 +1,10 @@
 import * as React from "react"
-import { WifiOff } from "lucide-react"
+import { CloudUpload, WifiOff } from "lucide-react"
 import { useRegisterSW } from "virtual:pwa-register/react"
 
+import { useOutbox } from "@/components/outbox-provider"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 
 /**
  * Two things a PWA owes the user that a normal site does not:
@@ -11,6 +13,7 @@ import { Button } from "@/components/ui/button"
  */
 export function PwaStatus() {
   const [offline, setOffline] = React.useState(!navigator.onLine)
+  const { pending, isFlushing } = useOutbox()
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -37,7 +40,33 @@ export function PwaStatus() {
         style={{ paddingTop: "max(0.375rem, env(safe-area-inset-top))" }}
       >
         <WifiOff className="size-3.5" />
-        Offline — showing the last loaded data
+        {pending > 0 ? (
+          <>
+            Offline — {pending} {pending === 1 ? "change" : "changes"} will sync
+            when you reconnect
+          </>
+        ) : (
+          <>Offline — showing the last loaded data</>
+        )}
+      </div>
+    )
+  }
+
+  // Back online with a backlog: say so, rather than letting writes land
+  // silently minutes after the user pressed Publish.
+  if (pending > 0) {
+    return (
+      <div
+        role="status"
+        className="fixed inset-x-0 top-0 z-[60] flex items-center justify-center gap-2 bg-sky-600 px-4 py-1.5 text-xs font-medium text-white"
+        style={{ paddingTop: "max(0.375rem, env(safe-area-inset-top))" }}
+      >
+        {isFlushing ? (
+          <Spinner className="size-3.5" />
+        ) : (
+          <CloudUpload className="size-3.5" />
+        )}
+        Syncing {pending} queued {pending === 1 ? "change" : "changes"}…
       </div>
     )
   }

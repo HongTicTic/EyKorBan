@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router"
 import { AlertTriangle } from "lucide-react"
 
 import { useAuth } from "@/components/auth-provider"
+import { useOutbox } from "@/components/outbox-provider"
 import { DEFAULT_INDUSTRY_OPTIONS, SingleDropdown } from "@/components/dropdown"
 import { EmptyState } from "@/components/empty-state"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -32,6 +33,7 @@ const JobEditor = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { enqueue, isOnline } = useOutbox()
   const isEdit = Boolean(id)
 
   const [title, setTitle] = useState("")
@@ -88,6 +90,22 @@ const JobEditor = () => {
 
     setIsSaving(true)
     setFormError(null)
+
+    // Offline: queue it and replay on reconnect (lesson 7.3).
+    if (!isOnline) {
+      enqueue(
+        id ? "updateJob" : "createJob",
+        id
+          ? { id, input: { title, description, categoryId, industryId } }
+          : {
+              userId: user.userId,
+              input: { title, description, categoryId, industryId },
+            },
+        title
+      )
+      navigate("/my-jobs", { state: { queued: title } })
+      return
+    }
 
     try {
       if (id) {

@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router"
 import "./index.css"
 import App from "./App.tsx"
 import { AuthProvider } from "@/components/auth-provider.tsx"
+import { OutboxProvider } from "@/components/outbox-provider.tsx"
 import { PwaStatus } from "@/components/pwa-status.tsx"
 import { SupabaseSetupNotice } from "@/components/supabase-setup-notice.tsx"
 import { ThemeProvider } from "@/components/theme-provider.tsx"
@@ -16,8 +17,10 @@ createRoot(document.getElementById("root")!).render(
       {isSupabaseConfigured ? (
         <BrowserRouter>
           <AuthProvider>
-            <PwaStatus />
-            <App />
+            <OutboxProvider>
+              <PwaStatus />
+              <App />
+            </OutboxProvider>
           </AuthProvider>
         </BrowserRouter>
       ) : (

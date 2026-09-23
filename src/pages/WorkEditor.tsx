@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router"
 import { AlertTriangle, ImagePlus, Loader2 } from "lucide-react"
 
 import { useAuth } from "@/components/auth-provider"
+import { useOutbox } from "@/components/outbox-provider"
 import { EmptyState } from "@/components/empty-state"
 import { SingleDropdown, DEFAULT_INDUSTRY_OPTIONS } from "@/components/dropdown"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -40,6 +41,7 @@ const WorkEditor = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { enqueue, isOnline } = useOutbox()
   const isEdit = Boolean(id)
 
   const [title, setTitle] = useState("")
@@ -132,6 +134,18 @@ const WorkEditor = () => {
       categoryId,
       industryId,
       status,
+    }
+
+    // Offline: park the write in the outbox rather than losing the user's
+    // work. It replays automatically on reconnect (lesson 7.3).
+    if (!isOnline) {
+      enqueue(
+        id ? "updateWork" : "createWork",
+        id ? { id, input } : { userId: user.userId, input },
+        input.title
+      )
+      navigate("/my-work", { state: { queued: input.title } })
+      return
     }
 
     try {
