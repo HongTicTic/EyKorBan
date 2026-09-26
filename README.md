@@ -140,3 +140,5 @@ user saying no, so it is swallowed rather than reported as a failure.
 - The project engagement lifecycle (FR-020 … FR-027) has no tables and no screens.
 - `useOfflineQueue` is built and tested but not yet wired into the work/job
   editors — those still fail outright when offline.
+
+//chore
