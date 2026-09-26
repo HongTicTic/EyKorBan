@@ -46,7 +46,7 @@ const Profile = ({ username }: { username?: string }) => {
           description={`There is no one called @${username} on the platform.`}
           action={
             <a
-              href="/hire-creatives"
+              href="./hire-creatives"
               className={cn(buttonVariants({ variant: "outline" }))}
             >
               Browse creatives
