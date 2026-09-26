@@ -2,6 +2,7 @@ import type { ProjectCard } from "@/interface/projectCard"
 import type { User } from "@/interface/user"
 import type { PortfolioItemRow, ProfileRow } from "@/lib/database.types"
 import { supabase } from "@/lib/supabase"
+import { PROFILE_COLUMNS } from "@/services/columns"
 import { describeError, unwrap } from "@/services/errors"
 import { toProjectCard, toUser } from "@/services/mappers"
 
@@ -20,7 +21,7 @@ export interface PortfolioListItem {
   author: User | null
 }
 
-const WITH_AUTHOR = "*, author:profiles!portfolio_items_freelancer_id_fkey(*)"
+const WITH_AUTHOR = `*, author:profiles!portfolio_items_freelancer_id_fkey(${PROFILE_COLUMNS})`
 
 type RowWithAuthor = PortfolioItemRow & { author: ProfileRow | null }
 

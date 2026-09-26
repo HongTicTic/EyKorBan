@@ -4,49 +4,43 @@ import { ArrowRight, Check } from "lucide-react"
 
 import { useAuth } from "@/components/auth-provider"
 import { AudienceToggle, type Audience } from "@/components/audience-toggle"
+import { useLanguage } from "@/components/language-provider"
 import { buttonVariants } from "@/components/ui/button"
 import { RoleName } from "@/interface/user"
+import type { MessageKey } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "eykorban.audience"
 
 /** The accent word cycles through the platform's real categories. */
-const ROTATING = [
-  "product design",
-  "web development",
-  "brand identity",
-  "mobile apps",
-  "motion and video",
+const ROTATING: MessageKey[] = [
+  "hero.word.productDesign",
+  "hero.word.webDevelopment",
+  "hero.word.brandIdentity",
+  "hero.word.mobileApps",
+  "hero.word.motionVideo",
 ]
 
 const COPY: Record<
   Audience,
   {
-    lead: string
-    points: string[]
-    cta: { label: string; href: string }
-    secondary: { label: string; href: string }
+    lead: MessageKey
+    points: MessageKey[]
+    cta: { label: MessageKey; href: string }
+    secondary: { label: MessageKey; href: string }
   }
 > = {
   hire: {
-    lead: "Work with independent talent in",
-    points: [
-      "Browse finished work, not promises",
-      "Agree scope and budget up front",
-      "Funds held until you approve the result",
-    ],
-    cta: { label: "Browse creatives", href: "/hire-creatives" },
-    secondary: { label: "Post a job", href: "/jobs/new" },
+    lead: "hero.hire.lead",
+    points: ["hero.hire.point1", "hero.hire.point2", "hero.hire.point3"],
+    cta: { label: "hero.hire.cta", href: "/hire-creatives" },
+    secondary: { label: "hero.hire.secondary", href: "/jobs/new" },
   },
   work: {
-    lead: "Get hired for what you are best at, in",
-    points: [
-      "Publish your work with no approval queue",
-      "Answer briefs from clients who are ready",
-      "Every project tracked to completion",
-    ],
-    cta: { label: "Find work", href: "/find-work" },
-    secondary: { label: "Show your work", href: "/work/new" },
+    lead: "hero.work.lead",
+    points: ["hero.work.point1", "hero.work.point2", "hero.work.point3"],
+    cta: { label: "hero.work.cta", href: "/find-work" },
+    secondary: { label: "hero.work.secondary", href: "/work/new" },
   },
 }
 
@@ -71,6 +65,7 @@ function readStored(): Audience | null {
  */
 export function HomeHero() {
   const { user } = useAuth()
+  const { t } = useLanguage()
 
   const [audience, setAudience] = React.useState<Audience>(
     () => readStored() ?? (user?.role === RoleName.FREELANCER ? "work" : "hire")
@@ -110,12 +105,12 @@ export function HomeHero() {
           />
 
           <h1 className="mt-7 text-4xl leading-[1.05] font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            {copy.lead}{" "}
+            {t(copy.lead)}{" "}
             {/* aria-live so the rotation is announced once, not on every tick
                 of the interval. */}
             <span className="relative inline-block text-primary dark:text-rose-400">
               <span key={wordIndex} className="animate-in fade-in slide-in-from-bottom-2 duration-500 motion-reduce:animate-none">
-                {ROTATING[wordIndex]}
+                {t(ROTATING[wordIndex])}
               </span>
             </span>
           </h1>
@@ -126,7 +121,7 @@ export function HomeHero() {
                 <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:text-rose-400">
                   <Check className="size-3" strokeWidth={3} />
                 </span>
-                <span className="text-muted-foreground">{point}</span>
+                <span className="text-muted-foreground">{t(point)}</span>
               </li>
             ))}
           </ul>
@@ -136,7 +131,7 @@ export function HomeHero() {
               to={copy.cta.href}
               className={cn(buttonVariants({ size: "lg" }), "rounded-full px-6")}
             >
-              {copy.cta.label}
+              {t(copy.cta.label)}
               <ArrowRight data-icon="inline-end" />
             </Link>
             <Link
@@ -146,7 +141,7 @@ export function HomeHero() {
                 "rounded-full px-5"
               )}
             >
-              {user ? copy.secondary.label : "Create an account"}
+              {user ? t(copy.secondary.label) : t("hero.createAccount")}
             </Link>
           </div>
         </div>

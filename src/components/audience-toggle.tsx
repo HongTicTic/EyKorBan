@@ -1,12 +1,14 @@
 import * as React from "react"
 
+import { useLanguage } from "@/components/language-provider"
+import type { MessageKey } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 export type Audience = "hire" | "work"
 
-const OPTIONS: { value: Audience; label: string }[] = [
-  { value: "hire", label: "Hire talent" },
-  { value: "work", label: "Get hired" },
+const OPTIONS: { value: Audience; label: MessageKey }[] = [
+  { value: "hire", label: "audience.hire" },
+  { value: "work", label: "audience.work" },
 ]
 
 /**
@@ -27,6 +29,7 @@ export function AudienceToggle({
   onChange: (next: Audience) => void
   className?: string
 }) {
+  const { t } = useLanguage()
   const index = OPTIONS.findIndex((option) => option.value === value)
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
@@ -39,7 +42,7 @@ export function AudienceToggle({
   return (
     <div
       role="radiogroup"
-      aria-label="What brings you here"
+      aria-label={t("audience.label")}
       onKeyDown={handleKeyDown}
       className={cn(
         "relative inline-flex rounded-full bg-muted p-1",
@@ -74,7 +77,7 @@ export function AudienceToggle({
               selected ? "text-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >
-            {option.label}
+            {t(option.label)}
           </button>
         )
       })}

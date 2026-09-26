@@ -22,7 +22,7 @@ export function toUser(row: ProfileRow): User {
     name: row.name,
     username: row.username ?? undefined,
     role: row.role as RoleName,
-    email: row.email,
+    email: row.email ?? "",
     avatarUrl: row.avatar_url ?? undefined,
     status: row.status,
     createdAt: row.created_at,

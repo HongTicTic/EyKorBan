@@ -56,12 +56,14 @@ export type ProfileRow = {
   name: string
   username: string | null
   role: UserRoleDb
-  email: string
+  /** Not granted to API roles (NFR-003). Present only on the viewer's own row. */
+  email?: string
   avatar_url: string | null
   status: UserStatusDb
   created_at: string
   updated_at: string
-  last_login_at: string | null
+  /** Not granted to API roles. */
+  last_login_at?: string | null
 }
 
 export type FreelancerProfileRow = {

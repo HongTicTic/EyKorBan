@@ -2,6 +2,7 @@ import type { Job } from "@/interface/job"
 import type { User } from "@/interface/user"
 import type { JobRow, ProfileRow } from "@/lib/database.types"
 import { supabase } from "@/lib/supabase"
+import { PROFILE_COLUMNS } from "@/services/columns"
 import { describeError, unwrap } from "@/services/errors"
 import { toJob, toUser } from "@/services/mappers"
 
@@ -16,7 +17,7 @@ export interface JobListItem {
   client: User | null
 }
 
-const WITH_CLIENT = "*, client:profiles!jobs_client_id_fkey(*)"
+const WITH_CLIENT = `*, client:profiles!jobs_client_id_fkey(${PROFILE_COLUMNS})`
 
 type RowWithClient = JobRow & { client: ProfileRow | null }
 

@@ -27,6 +27,7 @@ import Home from "@/pages/Home"
 // thing a visitor sees only delays it. Everything else loads on demand.
 const FindWork = lazy(() => import("@/pages/FindWork"))
 const HireCreatives = lazy(() => import("@/pages/HireCreatives"))
+const JobDetail = lazy(() => import("@/pages/JobDetail"))
 const JobEditor = lazy(() => import("@/pages/JobEditor"))
 const Login = lazy(() => import("@/pages/Login"))
 const MyJobs = lazy(() => import("@/pages/MyJobs"))
@@ -133,6 +134,7 @@ export function App() {
           <Route index element={<Home />} />
           <Route path="hire-creatives" element={<HireCreatives />} />
           <Route path="find-work" element={<FindWork />} />
+          <Route path="jobs/:id" element={<JobDetail />} />
           <Route path="work/:id" element={<WorkDetailRoute />} />
           <Route path="profile" element={<Profile />} />
           <Route path="profile/:username" element={<ProfileRoute />} />

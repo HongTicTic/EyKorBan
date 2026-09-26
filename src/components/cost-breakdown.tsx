@@ -12,11 +12,14 @@ export function CostBreakdown({
   budget,
   currency = "USD",
   title = "Cost breakdown",
+  viewer = "client",
   className,
 }: {
   budget: number
   currency?: string
   title?: string
+  /** Whose side the wording is written from. The numbers never change. */
+  viewer?: "client" | "freelancer"
   className?: string
 }) {
   const { fee, total } = costBreakdown(budget)
@@ -39,14 +42,24 @@ export function CostBreakdown({
           <dd className="tabular-nums">{money(fee, currency)}</dd>
         </div>
         <div className="mt-1 flex items-center justify-between border-t border-border pt-2 font-semibold">
-          <dt>You pay</dt>
+          <dt>{viewer === "client" ? "You pay" : "Client pays"}</dt>
           <dd className="tabular-nums">{money(total, currency)}</dd>
         </div>
       </dl>
 
       <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-        The freelancer receives {money(budget, currency)}. Funds are held by the
-        platform and released when you approve the work.
+        {viewer === "client" ? (
+          <>
+            The freelancer receives {money(budget, currency)}. Funds are held by
+            the platform and released when you approve the work.
+          </>
+        ) : (
+          <>
+            You receive the full {money(budget, currency)} — the client covers
+            the fee. Funds are held by the platform and released to you when
+            the client approves.
+          </>
+        )}
       </p>
     </div>
   )
