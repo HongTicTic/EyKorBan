@@ -10,7 +10,7 @@ cp .env.example .env.local
 
 Never put a `sb_secret_...` key or the legacy `service_role` key in Vite environment variables. Those keys bypass Row Level Security and must remain server-side.
 
-Run `supabase/migrations/001_initial_schema.sql` in the Supabase SQL editor before loading the repository functions. Until the two `VITE_SUPABASE_*` variables are configured, the app continues to use the existing static data as a local fallback.
+Run `supabase/migrations/001_initial_schema.sql` and then `supabase/seed.sql` in the Supabase SQL editor. The seed script contains all former mock users, freelancer profiles, project cards, and jobs. The app has no static data fallback, so these tables must be seeded before the main screens have content.
 # React + TypeScript + Vite + shadcn/ui
 
 This is a template for a new Vite project with React, TypeScript, and shadcn/ui.
