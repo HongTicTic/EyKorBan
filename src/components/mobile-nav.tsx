@@ -3,7 +3,9 @@ import { Briefcase, Compass, Search, UserRound } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 import { useAuth } from "@/components/auth-provider"
+import { useLanguage } from "@/components/language-provider"
 import { sidebarConfigByRole } from "@/config/sidebar.config"
+import type { MessageKey } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 interface Tab {
@@ -12,10 +14,10 @@ interface Tab {
   icon: LucideIcon
 }
 
-const PUBLIC_TABS: Tab[] = [
-  { label: "Explore", href: "/", icon: Compass },
-  { label: "Creatives", href: "/hire-creatives", icon: Search },
-  { label: "Jobs", href: "/find-work", icon: Briefcase },
+const PUBLIC_TABS: (Omit<Tab, "label"> & { label: MessageKey })[] = [
+  { label: "tabs.explore", href: "/", icon: Compass },
+  { label: "tabs.creatives", href: "/hire-creatives", icon: Search },
+  { label: "tabs.jobs", href: "/find-work", icon: Briefcase },
 ]
 
 /**
@@ -27,16 +29,17 @@ const PUBLIC_TABS: Tab[] = [
 export function MobileNav() {
   const { pathname } = useLocation()
   const { user } = useAuth()
+  const { t } = useLanguage()
 
   // Signed-in users get their portal's first entry (My work / My jobs) as a
   // fourth tab, so the parts the sidebar owns stay reachable on a phone.
   const portalItem = user ? sidebarConfigByRole[user.role]?.groups[0]?.items[0] : undefined
 
   const tabs: Tab[] = [
-    ...PUBLIC_TABS,
+    ...PUBLIC_TABS.map((tab) => ({ ...tab, label: t(tab.label) })),
     portalItem
       ? { label: portalItem.label, href: portalItem.href, icon: portalItem.icon }
-      : { label: "Profile", href: user ? "/profile" : "/login", icon: UserRound },
+      : { label: t("tabs.profile"), href: user ? "/profile" : "/login", icon: UserRound },
   ]
 
   return (

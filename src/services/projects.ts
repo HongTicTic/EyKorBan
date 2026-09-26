@@ -12,6 +12,7 @@ import type {
   ProfileRow,
 } from "@/lib/database.types"
 import { supabase } from "@/lib/supabase"
+import { PROFILE_COLUMNS } from "@/services/columns"
 import { describeError, unwrap } from "@/services/errors"
 import { toUser } from "@/services/mappers"
 
@@ -71,8 +72,8 @@ export interface ProjectListItem {
 
 const WITH_PARTIES = `
   *,
-  client:profiles!projects_client_id_fkey(*),
-  freelancer:profiles!projects_freelancer_id_fkey(*)
+  client:profiles!projects_client_id_fkey(${PROFILE_COLUMNS}),
+  freelancer:profiles!projects_freelancer_id_fkey(${PROFILE_COLUMNS})
 `
 
 type RowWithParties = ProjectRow & {
@@ -169,6 +170,7 @@ async function recordEvent(
 }
 
 export interface CreateProjectInput {
+  clientId: string
   freelancerId: string
   title: string
   scope: string
@@ -178,16 +180,23 @@ export interface CreateProjectInput {
   sourceJobId?: string
 }
 
-/** STORY-014: starts in the enquiry state, from a portfolio item or a job. */
+/**
+ * STORY-014: starts in the enquiry state.
+ *
+ * The actor is whoever is signed in; which party that is depends on the path.
+ * From a portfolio item the client initiates (STORY-004); from a job the
+ * freelancer does (STORY-012). The insert policy checks the actor against the
+ * source, so neither side can address a project to someone it doesn't belong to.
+ */
 export async function createProject(
-  clientId: string,
+  actorId: string,
   input: CreateProjectInput
 ): Promise<Project> {
   const row = unwrap(
     await supabase
       .from("projects")
       .insert({
-        client_id: clientId,
+        client_id: input.clientId,
         freelancer_id: input.freelancerId,
         title: input.title.trim(),
         scope: input.scope.trim(),
@@ -201,7 +210,7 @@ export async function createProject(
       .returns<ProjectRow>()
   )
 
-  await recordEvent(row.id, clientId, "created")
+  await recordEvent(row.id, actorId, "created")
   return toProject(row)
 }
 
@@ -227,7 +236,15 @@ async function transition(
   return toProject(row)
 }
 
-/** STORY-015: only the addressed freelancer — enforced by the DB trigger. */
+/**
+ * The party who answers an enquiry: whoever did not start it. Mirrors the
+ * database trigger — kept in one place so the UI and the rule cannot disagree.
+ */
+export function enquiryResponderId(project: Project): string {
+  return project.sourceJobId ? project.clientId : project.freelancerId
+}
+
+/** STORY-015: only the responder — enforced by the DB trigger. */
 export const acceptProject = (projectId: string, actorId: string) =>
   transition(projectId, actorId, "active", "accepted")
 

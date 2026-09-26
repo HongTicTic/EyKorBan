@@ -1,6 +1,8 @@
 import { Fragment, type HTMLAttributes, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
+import type { MessageKey } from "@/lib/i18n"
 import { AppIcon } from "@/components/app-icon"
+import { useLanguage } from "@/components/language-provider"
 import { Separator } from "@/components/ui/separator"
 
 // ============================================================================
@@ -31,49 +33,49 @@ export interface FooterProps extends HTMLAttributes<HTMLElement> {
 // Default Configuration Data (Single Source of Truth)
 // ============================================================================
 
-const DEFAULT_BRAND_NAME = "Jes tae tver tv"
-const DEFAULT_BRAND_DESC =
-  "The trusted freelance marketplace connecting world-class creative and technical talent with verified projects."
-
-const DEFAULT_SECTIONS: FooterSection[] = [
+// The defaults hold message keys and are translated at render time; props
+// passed in by a caller are used as given.
+const DEFAULT_SECTIONS: {
+  title: MessageKey
+  links: { label: MessageKey; href: string }[]
+}[] = [
   {
-    title: "Freelancers",
+    title: "footer.freelancers",
     links: [
-      { label: "Overview", href: "/" },
-      { label: "Find Gigs", href: "/jobs" },
-      { label: "Portfolio Showcase", href: "/freelancer/portal" },
-      { label: "Escrow Guarantee", href: "/projects" },
+      { label: "footer.overview", href: "/" },
+      { label: "footer.findGigs", href: "/jobs" },
+      { label: "footer.portfolio", href: "/freelancer/portal" },
+      { label: "footer.escrow", href: "/projects" },
     ],
   },
   {
-    title: "Clients",
+    title: "footer.clients",
     links: [
-      { label: "Discover Talent", href: "/" },
-      { label: "Post a Project", href: "/client/jobs/new" },
-      { label: "Enterprise Solutions", href: "/enterprise" },
+      { label: "footer.discoverTalent", href: "/" },
+      { label: "footer.postProject", href: "/client/jobs/new" },
+      { label: "footer.enterprise", href: "/enterprise" },
     ],
   },
   {
-    title: "Resources",
+    title: "footer.resources",
     links: [
-      { label: "Pricing & Fees", href: "/pricing" },
-      { label: "Help Center", href: "/help" },
-      { label: "Trust & Safety", href: "/trust-safety" },
+      { label: "footer.pricing", href: "/pricing" },
+      { label: "footer.help", href: "/help" },
+      { label: "footer.trust", href: "/trust-safety" },
     ],
   },
   {
-    title: "Legal & Privacy",
+    title: "footer.legal",
     links: [
-      { label: "Terms of Service", href: "/legal/terms" },
-      { label: "Privacy Policy", href: "/legal/privacy" },
-      { label: "Cookie Policy", href: "/legal/cookies" },
+      { label: "footer.terms", href: "/legal/terms" },
+      { label: "footer.privacy", href: "/legal/privacy" },
+      { label: "footer.cookies", href: "/legal/cookies" },
     ],
   },
 ]
 
 const CURRENT_YEAR = new Date().getFullYear()
-const DEFAULT_COPYRIGHT = `© ${CURRENT_YEAR} Jes tae tver tv Inc. All rights reserved.`
-const DEFAULT_BADGES = ["Middleman Escrow Protected", "Global Payouts"]
+const DEFAULT_BADGES: MessageKey[] = ["footer.badgeEscrow", "footer.badgePayouts"]
 
 // ============================================================================
 // Internal Sub-components (Single Responsibility Principle)
@@ -170,15 +172,26 @@ function FooterBottom({
 // ============================================================================
 
 export function Footer({
-  brandName = DEFAULT_BRAND_NAME,
-  brandDescription = DEFAULT_BRAND_DESC,
+  brandName,
+  brandDescription,
   brandLogo,
-  sections = DEFAULT_SECTIONS,
-  copyright = DEFAULT_COPYRIGHT,
-  badges = DEFAULT_BADGES,
+  sections,
+  copyright,
+  badges,
   className,
   ...props
 }: FooterProps) {
+  const { t } = useLanguage()
+
+  brandName ??= t("footer.brand")
+  brandDescription ??= t("footer.description")
+  sections ??= DEFAULT_SECTIONS.map((section) => ({
+    title: t(section.title),
+    links: section.links.map((link) => ({ ...link, label: t(link.label) })),
+  }))
+  copyright ??= t("footer.copyright", { year: CURRENT_YEAR })
+  badges ??= DEFAULT_BADGES.map((badge) => t(badge))
+
   return (
     <footer
       className={cn(

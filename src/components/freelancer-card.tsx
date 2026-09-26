@@ -19,12 +19,18 @@ interface FreelancerCardProps {
 
 export function FreelancerCard({ user, profile, works }: FreelancerCardProps) {
   const cover = works[0]?.coverImageUrl
+  const profileHref = `/profile/${profile.username}`
   const totalLikes = works.reduce((sum, work) => sum + work.likeCount, 0)
   const hiddenSkillCount = profile.skills.length - VISIBLE_SKILLS
 
   return (
     <article className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-xs transition-shadow hover:shadow-md">
-      <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
+      <Link
+        to={profileHref}
+        tabIndex={-1}
+        aria-hidden
+        className="block aspect-[16/9] w-full overflow-hidden bg-muted"
+      >
         {cover ? (
           <img
             src={cover}
@@ -39,7 +45,7 @@ export function FreelancerCard({ user, profile, works }: FreelancerCardProps) {
             <ImageIcon className="size-8" />
           </div>
         )}
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-col px-5 pb-5">
         <Avatar className="-mt-8 size-16 ring-4 ring-card">
@@ -50,7 +56,9 @@ export function FreelancerCard({ user, profile, works }: FreelancerCardProps) {
         </Avatar>
 
         <h3 className="mt-3 text-base font-semibold tracking-tight">
-          {user.name}
+          <Link to={profileHref} className="hover:underline">
+            {user.name}
+          </Link>
         </h3>
         {profile.tagline && (
           <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
@@ -91,15 +99,29 @@ export function FreelancerCard({ user, profile, works }: FreelancerCardProps) {
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <a
-            href={`/profile/${profile.username}`}
+          <Link
+            to={profileHref}
             className={cn(buttonVariants({ variant: "outline" }), "rounded-lg")}
           >
             View profile
-          </a>
-          <Link to="/login" className={cn(buttonVariants(), "rounded-lg")}>
-            Start a project
           </Link>
+          {works[0] ? (
+            <Link
+              to={`/start-project/work/${works[0].id}`}
+              className={cn(buttonVariants(), "rounded-lg")}
+            >
+              Start a project
+            </Link>
+          ) : (
+            <span
+              className={cn(
+                buttonVariants({ variant: "secondary" }),
+                "pointer-events-none rounded-lg opacity-60"
+              )}
+            >
+              No work yet
+            </span>
+          )}
         </div>
       </div>
     </article>

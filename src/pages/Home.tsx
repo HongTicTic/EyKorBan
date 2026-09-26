@@ -4,6 +4,7 @@ import { AlertTriangle, SearchX } from "lucide-react"
 import Dropdown from "@/components/dropdown"
 import { EmptyState } from "@/components/empty-state"
 import { HomeHero } from "@/components/home-hero"
+import { useLanguage } from "@/components/language-provider"
 import { ProjectCard } from "@/components/project-card"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -13,6 +14,7 @@ import { listPublishedWork, type PortfolioSort } from "@/services/portfolio"
 const SKELETON_COUNT = 8
 
 const Home = () => {
+  const { t } = useLanguage()
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIndustry, setSelectedIndustry] = useState("all")
   const [selectedSort, setSelectedSort] = useState<PortfolioSort>("recent")
@@ -38,10 +40,10 @@ const Home = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            Recent work
+            {t("home.title")}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Published by freelancers on the platform, newest first
+            {t("home.subtitle")}
           </p>
         </div>
 
@@ -58,10 +60,10 @@ const Home = () => {
             {isLoading ? (
               <>
                 <Spinner className="size-3" />
-                Loading published projects…
+                {t("home.loading")}
               </>
             ) : (
-              <>Showing {projects.length} published projects</>
+              <>{t("home.showing", { count: projects.length })}</>
             )}
           </p>
         </div>
@@ -69,11 +71,11 @@ const Home = () => {
         {error ? (
           <EmptyState
             icon={AlertTriangle}
-            title="Could not load projects"
+            title={t("home.errorTitle")}
             description={error}
             action={
               <Button variant="outline" onClick={refetch}>
-                Try again
+                {t("home.retry")}
               </Button>
             }
           />
@@ -90,8 +92,8 @@ const Home = () => {
         ) : projects.length === 0 ? (
           <EmptyState
             icon={SearchX}
-            title="No projects match these filters"
-            description="Try a different category or industry."
+            title={t("home.emptyTitle")}
+            description={t("home.emptyDescription")}
             action={
               <Button
                 variant="outline"
@@ -100,7 +102,7 @@ const Home = () => {
                   setSelectedIndustry("all")
                 }}
               >
-                Reset filters
+                {t("home.resetFilters")}
               </Button>
             }
           />

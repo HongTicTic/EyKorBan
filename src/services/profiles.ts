@@ -6,6 +6,7 @@ import type {
   ProfileRow,
 } from "@/lib/database.types"
 import { supabase } from "@/lib/supabase"
+import { PROFILE_COLUMNS } from "@/services/columns"
 import { unwrap } from "@/services/errors"
 import { toFreelancerProfile, toProjectCard, toUser } from "@/services/mappers"
 
@@ -18,7 +19,7 @@ export interface CreativeSummary {
 }
 
 const WITH_DETAIL = `
-  *,
+  ${PROFILE_COLUMNS},
   freelancer_profile:freelancer_profiles!freelancer_profiles_user_id_fkey(*),
   works:portfolio_items!portfolio_items_freelancer_id_fkey(*)
 `
@@ -131,7 +132,7 @@ export async function updateProfile(
           }),
         })
         .eq("id", userId)
-        .select("*")
+        .select(PROFILE_COLUMNS)
         .single()
         .returns<ProfileRow>()
     )

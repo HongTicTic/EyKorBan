@@ -33,6 +33,7 @@ import {
   approveProject,
   cancelProject,
   declineProject,
+  enquiryResponderId,
   fundProject,
   getProject,
   requestRevision,
@@ -170,6 +171,12 @@ const ProjectDetail = () => {
   const { project, client, freelancer, events, deliverables } = data
   const isClient = user.userId === project.clientId
   const isFreelancer = user.userId === project.freelancerId
+  // The party who did not start the project answers it — the client on the job
+  // path (STORY-012), the freelancer on the portfolio path (STORY-004).
+  const isResponder = user.userId === enquiryResponderId(project)
+  const responderName = isClient
+    ? (freelancer?.name ?? "the freelancer")
+    : (client?.name ?? "the client")
   const nameFor = (actorId?: string) =>
     actorId === project.clientId
       ? (client?.name ?? "The client")
@@ -199,7 +206,7 @@ const ProjectDetail = () => {
             <Link
               to={
                 project.sourceJobId
-                  ? "/find-work"
+                  ? `/jobs/${project.sourceJobId}`
                   : `/work/${project.sourcePortfolioItemId}`
               }
               className="text-primary hover:underline dark:text-rose-400"
@@ -244,8 +251,8 @@ const ProjectDetail = () => {
 
       {/* ── State-appropriate actions (FR-023 AC-3) ───────────────────── */}
 
-      {/* STORY-015: only the addressed freelancer responds. */}
-      {project.status === "enquiry" && isFreelancer && (
+      {/* STORY-015: only the party who did not start it responds. */}
+      {project.status === "enquiry" && isResponder && (
         <div className="mt-6 rounded-2xl border border-border bg-card p-5">
           <h2 className="text-sm font-semibold">Respond to this enquiry</h2>
           <Textarea
@@ -274,9 +281,9 @@ const ProjectDetail = () => {
         </div>
       )}
 
-      {project.status === "enquiry" && isClient && (
+      {project.status === "enquiry" && !isResponder && (
         <p className="mt-6 rounded-xl bg-muted/60 px-4 py-3 text-sm text-muted-foreground">
-          Waiting for {freelancer?.name ?? "the freelancer"} to accept.
+          Waiting for {responderName} to accept.
         </p>
       )}
 

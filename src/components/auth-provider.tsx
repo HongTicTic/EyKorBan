@@ -7,6 +7,7 @@ import { RoleName } from "@/interface/user"
 import type { ProfileRow } from "@/lib/database.types"
 import { clearIdentityScopedCaches } from "@/lib/cache"
 import { supabase } from "@/lib/supabase"
+import { PROFILE_COLUMNS } from "@/services/columns"
 import { toUser } from "@/services/mappers"
 
 export interface SignUpInput {
@@ -33,16 +34,21 @@ interface AuthState {
 
 const AuthContext = React.createContext<AuthState | undefined>(undefined)
 
-async function fetchProfile(userId: string): Promise<User | null> {
+async function fetchProfile(
+  userId: string,
+  email: string
+): Promise<User | null> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select(PROFILE_COLUMNS)
     .eq("id", userId)
     .maybeSingle()
     .returns<ProfileRow>()
 
   if (error || !data) return null
-  return toUser(data)
+  // email is not publicly readable from profiles (NFR-003). The session holds
+  // the canonical copy, and it is only ever the viewer's own.
+  return { ...toUser(data), email }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -84,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const userId = session?.user.id ?? null
+  const userEmail = session?.user.email ?? ""
 
   React.useEffect(() => {
     if (!userId) return
@@ -95,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true)
 
-    fetchProfile(userId)
+    fetchProfile(userId, userEmail)
       .then((profile) => {
         if (active) setUser(profile)
       })
@@ -106,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       active = false
     }
-  }, [userId])
+  }, [userId, userEmail])
 
   const signIn = React.useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -144,8 +151,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshProfile = React.useCallback(async () => {
     if (!userId) return
-    setUser(await fetchProfile(userId))
-  }, [userId])
+    setUser(await fetchProfile(userId, userEmail))
+  }, [userId, userEmail])
 
   const value = React.useMemo(
     () => ({

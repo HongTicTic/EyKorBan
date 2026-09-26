@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate, useParams, useSearchParams } from "react-router"
+import { Link, useNavigate, useParams } from "react-router"
 import { AlertTriangle } from "lucide-react"
 
 import { useAuth } from "@/components/auth-provider"
@@ -10,6 +10,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
+import { RoleName } from "@/interface/user"
 import { cn } from "@/lib/utils"
 import { getJobById } from "@/services/jobs"
 import { getWorkById } from "@/services/portfolio"
@@ -18,11 +19,15 @@ import { createProject } from "@/services/projects"
 type FieldErrors = Partial<Record<"title" | "scope" | "budget" | "deadline", string>>
 
 interface SourceContext {
+  clientId: string
   freelancerId: string
-  freelancerName: string
+  /** The other party, from the viewer's side. */
+  counterpartName: string
   label: string
   portfolioItemId?: string
   jobId?: string
+  /** Set when the viewer cannot start a project from this source. */
+  blocked?: string
 }
 
 /**
@@ -34,7 +39,6 @@ interface SourceContext {
  */
 const StartProject = () => {
   const { from, id } = useParams()
-  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { user } = useAuth()
 
@@ -52,27 +56,38 @@ const StartProject = () => {
 
   // STORY-014 AC-1: the linked source is resolved automatically, never typed.
   useEffect(() => {
-    if (!id) return
+    if (!id || !user) return
     let active = true
 
-    const load =
+    const load: Promise<SourceContext> =
       from === "job"
-        ? getJobById(id).then(({ job, client }) => {
-            // On a job the freelancer is whoever responds — that is the
-            // signed-in user. The client is the job's poster.
-            void client
-            return {
-              freelancerId: searchParams.get("freelancer") ?? "",
-              freelancerName: "",
-              label: job.title,
-              jobId: job.id,
-            }
-          })
-        : getWorkById(id).then(({ card, author }) => ({
+        ? // STORY-012: the freelancer responds to a client's job.
+          getJobById(id).then(({ job, client }) => ({
+            clientId: job.clientId,
+            freelancerId: user.userId,
+            counterpartName: client?.name ?? "the client",
+            label: job.title,
+            jobId: job.id,
+            blocked:
+              user.role !== RoleName.FREELANCER
+                ? "Only freelancer accounts can respond to a job."
+                : job.status !== "open"
+                  ? "This job has closed."
+                  : undefined,
+          }))
+        : // STORY-004: the client approaches a freelancer about their work.
+          getWorkById(id).then(({ card, author }) => ({
+            clientId: user.userId,
             freelancerId: card.freelanceId,
-            freelancerName: author?.name ?? "this freelancer",
+            counterpartName: author?.name ?? "this freelancer",
             label: card.title,
             portfolioItemId: card.id,
+            blocked:
+              card.freelanceId === user.userId
+                ? "This is your own work."
+                : user.role !== RoleName.CLIENT
+                  ? "Only client accounts can start a project from someone's work."
+                  : undefined,
           }))
 
     load
@@ -95,7 +110,7 @@ const StartProject = () => {
     return () => {
       active = false
     }
-  }, [from, id, searchParams])
+  }, [from, id, user])
 
   function validate(amount: number): FieldErrors {
     const errors: FieldErrors = {}
@@ -128,6 +143,7 @@ const StartProject = () => {
 
     try {
       const project = await createProject(user.userId, {
+        clientId: source.clientId,
         freelancerId: source.freelancerId,
         title,
         scope,
@@ -156,13 +172,14 @@ const StartProject = () => {
     )
   }
 
-  if (loadError || !source || !source.freelancerId) {
+  if (loadError || !source || source.blocked) {
     return (
       <div className="container mx-auto max-w-2xl px-4 py-16">
         <EmptyState
           icon={AlertTriangle}
           title="Could not start a project here"
           description={
+            source?.blocked ??
             loadError ??
             "The work or job this project would be linked to is unavailable."
           }
@@ -184,10 +201,17 @@ const StartProject = () => {
         Start a project
       </h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        With <span className="font-medium text-foreground">{source.freelancerName || "this freelancer"}</span>
-        , from{" "}
+        With{" "}
+        <span className="font-medium text-foreground">
+          {source.counterpartName}
+        </span>
+        , about{" "}
         <Link
-          to={source.jobId ? "/find-work" : `/work/${source.portfolioItemId}`}
+          to={
+            source.jobId
+              ? `/jobs/${source.jobId}`
+              : `/work/${source.portfolioItemId}`
+          }
           className="font-medium text-primary hover:underline dark:text-rose-400"
         >
           {source.label}
@@ -264,7 +288,11 @@ const StartProject = () => {
           </div>
 
           {/* AC-2: updates live as the budget is typed. */}
-          <CostBreakdown budget={amount} title="Before you send this" />
+          <CostBreakdown
+            budget={amount}
+            title="Before you send this"
+            viewer={source.jobId ? "freelancer" : "client"}
+          />
 
           {formError && (
             <p
