@@ -1,4 +1,10 @@
-import { Briefcase, FolderOpen, PlusCircle, UserRound } from "lucide-react"
+import {
+  Briefcase,
+  FolderKanban,
+  FolderOpen,
+  PlusCircle,
+  UserRound,
+} from "lucide-react"
 
 import type { SidebarConfig } from "@/interface/sidebar"
 import { RoleName } from "@/interface/user"
@@ -15,6 +21,7 @@ export const freelancerSidebarConfig: SidebarConfig = {
   groups: [
     {
       items: [
+        { label: "Projects", href: "/projects", icon: FolderKanban },
         { label: "My work", href: "/my-work", icon: FolderOpen },
         { label: "New work", href: "/work/new", icon: PlusCircle },
       ],
@@ -32,6 +39,7 @@ export const clientSidebarConfig: SidebarConfig = {
   groups: [
     {
       items: [
+        { label: "Projects", href: "/projects", icon: FolderKanban },
         { label: "My jobs", href: "/my-jobs", icon: Briefcase },
         { label: "Post a job", href: "/jobs/new", icon: PlusCircle },
       ],

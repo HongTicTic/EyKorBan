@@ -19,14 +19,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { ProjectCard } from "@/components/project-card"
 import { ShareButton } from "@/components/share-button"
@@ -58,7 +51,6 @@ export interface PortfolioDetailProps {
   onBack?: () => void
   onSelectProject?: (id: string) => void
   onStartProject?: () => void
-  onSendInquiry?: () => void
   className?: string
 }
 
@@ -93,7 +85,6 @@ function PortfolioDetailView({
   onBack,
   onSelectProject,
   onStartProject,
-  onSendInquiry,
   className,
 }: PortfolioDetailViewProps) {
   const categoryName = getCategoryName(project.categoryId)
@@ -151,16 +142,9 @@ function PortfolioDetailView({
   }, [project.id, project.likeCount])
 
   // Modals
-  const [isProjectDialogOpen, setIsProjectDialogOpen] = React.useState(false)
-  const [isInquiryDialogOpen, setIsInquiryDialogOpen] = React.useState(false)
 
   // Toast feedback
-  const [toastMessage, setToastMessage] = React.useState<string | null>(null)
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg)
-    setTimeout(() => setToastMessage(null), 2500)
-  }
 
   const toggleSave = () => {
     setIsSaved((prev) => {
@@ -191,12 +175,6 @@ function PortfolioDetailView({
       )}
     >
       {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-6 right-6 z-50 flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium text-card-foreground shadow-lg">
-          <CheckCircle className="size-4 text-primary" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
 
       {/* ====================================================================
           Sub-Header: Breadcrumb & Share / Save (Sticky below app Header)
@@ -606,27 +584,19 @@ function PortfolioDetailView({
 
                 {/* CTA Action Buttons */}
                 <div className="space-y-2 pt-2">
-                  <Button
-                    onClick={() => {
-                      setIsProjectDialogOpen(true)
-                      onStartProject?.()
-                    }}
-                    className="h-10.5 w-full cursor-pointer gap-1.5 rounded-xl bg-primary text-xs font-semibold text-primary-foreground shadow-xs transition-transform hover:bg-primary/90 active:scale-[0.99]"
+                  {/* STORY-004: the CTA is an entry point into STORY-014, not
+                      a dialog that collects details and drops them. */}
+                  <Link
+                    to={`/start-project/work/${project.id}`}
+                    onClick={() => onStartProject?.()}
+                    className={cn(
+                      buttonVariants(),
+                      "h-10.5 w-full cursor-pointer gap-1.5 rounded-xl text-xs font-semibold shadow-xs transition-transform active:scale-[0.99]"
+                    )}
                   >
                     <span>Start a project</span>
                     <ArrowRight className="size-3.5" />
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setIsInquiryDialogOpen(true)
-                      onSendInquiry?.()
-                    }}
-                    className="h-9.5 w-full cursor-pointer rounded-xl border-border bg-card text-xs font-medium text-foreground shadow-2xs hover:bg-muted"
-                  >
-                    Inquire availability
-                  </Button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -680,116 +650,7 @@ function PortfolioDetailView({
       {/* ====================================================================
           Interactive Dialog: Start a Project
       ==================================================================== */}
-      <Dialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen}>
-        <DialogContent className="rounded-2xl border-border bg-card text-card-foreground sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold tracking-tight text-foreground">
-              Start a project with {author.name}
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              Fixed-scope milestone package backed by the Jes Escrow Guarantee.
-            </DialogDescription>
-          </DialogHeader>
 
-          <div className="space-y-4 py-2">
-            <div>
-              <label className="text-xs font-semibold text-foreground">
-                Project Scope
-              </label>
-              <input
-                type="text"
-                defaultValue={`${project.title} — ${project.subtitle}`}
-                className="mt-1.5 w-full rounded-xl border border-border bg-muted/50 px-3.5 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
-              />
-            </div>
-
-            <div className="space-y-2 rounded-xl border border-border bg-muted/40 p-3.5 text-xs">
-              <div className="flex justify-between text-muted-foreground">
-                <span>Fixed-scope package</span>
-                <span className="font-semibold text-foreground">$4,500</span>
-              </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>Platform Escrow Fee (10%)</span>
-                <span>$450</span>
-              </div>
-              <Separator />
-              <div className="flex justify-between text-xs font-bold text-foreground">
-                <span>Total Escrow Deposit</span>
-                <span className="font-bold text-primary">$4,950</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsProjectDialogOpen(false)}
-              className="cursor-pointer rounded-xl border-border bg-card text-foreground hover:bg-muted"
-            >
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                setIsProjectDialogOpen(false)
-                showToast(
-                  `Milestone project request submitted to ${author.name}!`
-                )
-              }}
-              className="cursor-pointer rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              Confirm Escrow Request
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* ====================================================================
-          Interactive Dialog: Send Inquiry
-      ==================================================================== */}
-      <Dialog open={isInquiryDialogOpen} onOpenChange={setIsInquiryDialogOpen}>
-        <DialogContent className="rounded-2xl border-border bg-card text-card-foreground sm:max-w-[460px]">
-          <DialogHeader>
-            <DialogTitle className="text-base font-bold text-foreground">
-              Inquire with {author.name}
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              Send a direct question regarding scope, milestones, or
-              availability.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-3 py-1">
-            <textarea
-              rows={4}
-              placeholder={`Hi ${author.name}, I'd like to discuss custom requirements for ${project.title}...`}
-              className="w-full rounded-xl border border-border bg-muted/50 p-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 pt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsInquiryDialogOpen(false)}
-              className="cursor-pointer rounded-xl border-border bg-card text-foreground hover:bg-muted"
-            >
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                setIsInquiryDialogOpen(false)
-                showToast(`Inquiry message delivered to ${author.name}!`)
-              }}
-              className="cursor-pointer rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              Send Message
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* ====================================================================
           Interactive Lightbox Dialog

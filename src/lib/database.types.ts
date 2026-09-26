@@ -18,6 +18,25 @@ export type UserRoleDb = "CLIENT" | "FREELANCER" | "ADMIN"
 export type UserStatusDb = "ACTIVE" | "SUSPENDED" | "PENDING_VERIFICATION"
 export type PortfolioStatusDb = "draft" | "published"
 export type JobStatusDb = "open" | "closed"
+export type ProjectStatusDb =
+  | "enquiry"
+  | "active"
+  | "delivered"
+  | "completed"
+  | "cancelled"
+  | "declined"
+export type PaymentStatusDb = "unfunded" | "held" | "released" | "returned"
+export type ProjectEventTypeDb =
+  | "created"
+  | "accepted"
+  | "declined"
+  | "funded"
+  | "delivered"
+  | "revision_requested"
+  | "approved"
+  | "released"
+  | "completed"
+  | "cancelled"
 
 export type CategoryRow = {
   id: string
@@ -96,6 +115,46 @@ export type JobRow = {
   published_at: string
   created_at: string
   updated_at: string
+}
+
+export type ProjectRow = {
+  id: string
+  client_id: string
+  freelancer_id: string
+  title: string
+  scope: string
+  budget: number
+  currency: string
+  deadline: string | null
+  status: ProjectStatusDb
+  payment_status: PaymentStatusDb
+  source_portfolio_item_id: string | null
+  source_job_id: string | null
+  /** Generated column — never written by the client. */
+  platform_fee: number
+  /** Generated column — never written by the client. */
+  client_total: number
+  created_at: string
+  updated_at: string
+  last_activity_at: string
+}
+
+export type DeliverableRow = {
+  id: string
+  project_id: string
+  submitted_by: string
+  note: string
+  images: string[]
+  created_at: string
+}
+
+export type ProjectEventRow = {
+  id: string
+  project_id: string
+  actor_id: string | null
+  type: ProjectEventTypeDb
+  note: string | null
+  created_at: string
 }
 
 export type Database = {
@@ -239,6 +298,58 @@ export type Database = {
         }
         Relationships: []
       }
+      projects: {
+        Row: ProjectRow
+        Insert: {
+          client_id: string
+          freelancer_id: string
+          title: string
+          scope: string
+          budget: number
+          id?: string
+          currency?: string
+          deadline?: string | null
+          status?: ProjectStatusDb
+          payment_status?: PaymentStatusDb
+          source_portfolio_item_id?: string | null
+          source_job_id?: string | null
+        }
+        Update: {
+          title?: string
+          scope?: string
+          budget?: number
+          deadline?: string | null
+          status?: ProjectStatusDb
+          payment_status?: PaymentStatusDb
+        }
+        Relationships: []
+      }
+      deliverables: {
+        Row: DeliverableRow
+        Insert: {
+          project_id: string
+          submitted_by: string
+          note: string
+          id?: string
+          images?: string[]
+          created_at?: string
+        }
+        Update: { note?: string; images?: string[] }
+        Relationships: []
+      }
+      project_events: {
+        Row: ProjectEventRow
+        Insert: {
+          project_id: string
+          type: ProjectEventTypeDb
+          actor_id?: string | null
+          id?: string
+          note?: string | null
+          created_at?: string
+        }
+        Update: { note?: string | null }
+        Relationships: []
+      }
       jobs: {
         Row: JobRow
         Insert: {
@@ -269,6 +380,9 @@ export type Database = {
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
     Enums: {
+      project_status: ProjectStatusDb
+      payment_status: PaymentStatusDb
+      project_event_type: ProjectEventTypeDb
       user_role: UserRoleDb
       user_status: UserStatusDb
       portfolio_status: PortfolioStatusDb

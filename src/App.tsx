@@ -34,7 +34,10 @@ const MyWork = lazy(() => import("@/pages/MyWork"))
 const PortfolioDetail = lazy(() =>
   import("@/pages/PortfolioDetail").then((m) => ({ default: m.PortfolioDetail }))
 )
+const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"))
+const Projects = lazy(() => import("@/pages/Projects"))
 const Profile = lazy(() => import("@/pages/Profile"))
+const StartProject = lazy(() => import("@/pages/StartProject"))
 const Signup = lazy(() => import("@/pages/Signup"))
 const WorkEditor = lazy(() => import("@/pages/WorkEditor"))
 
@@ -133,6 +136,15 @@ export function App() {
           <Route path="work/:id" element={<WorkDetailRoute />} />
           <Route path="profile" element={<Profile />} />
           <Route path="profile/:username" element={<ProfileRoute />} />
+
+          {/* Project engagement (STORY-014 … STORY-019). Both actors share
+              these routes, so the guard checks for a session rather than a
+              role; RLS decides what each one can see. */}
+          <Route element={<RequireAuth />}>
+            <Route path="projects" element={<Projects />} />
+            <Route path="projects/:id" element={<ProjectDetail />} />
+            <Route path="start-project/:from/:id" element={<StartProject />} />
+          </Route>
 
           {/* Freelancer portal (FR-007 … FR-012). "work/new" is declared before
               "work/:id" for readability; the router ranks static segments higher

@@ -3,6 +3,7 @@ import { AlertTriangle, SearchX } from "lucide-react"
 
 import Dropdown from "@/components/dropdown"
 import { EmptyState } from "@/components/empty-state"
+import { HomeHero } from "@/components/home-hero"
 import { ProjectCard } from "@/components/project-card"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -31,89 +32,93 @@ const Home = () => {
   const projects = data ?? []
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-          Featured Projects
-        </h1>
-        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-          Explore curated freelance work and recent showcase projects
-        </p>
-      </div>
+    <>
+      <HomeHero />
 
-      <div className="mb-6 flex flex-col gap-2">
-        <Dropdown
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          selectedIndustry={selectedIndustry}
-          onIndustryChange={setSelectedIndustry}
-          selectedSort={selectedSort}
-          onSortChange={(sort) => setSelectedSort(sort as PortfolioSort)}
-        />
-        <p className="flex items-center gap-2 text-xs text-muted-foreground">
-          {isLoading ? (
-            <>
-              <Spinner className="size-3" />
-              Loading published projects…
-            </>
-          ) : (
-            <>Showing {projects.length} published projects</>
-          )}
-        </p>
-      </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">
+            Recent work
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Published by freelancers on the platform, newest first
+          </p>
+        </div>
 
-      {error ? (
-        <EmptyState
-          icon={AlertTriangle}
-          title="Could not load projects"
-          description={error}
-          action={
-            <Button variant="outline" onClick={refetch}>
-              Try again
-            </Button>
-          }
-        />
-      ) : isLoading ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
-            <div
-              key={index}
-              className="h-64 animate-pulse rounded-xl bg-muted"
-              aria-hidden
-            />
-          ))}
+        <div className="mb-6 flex flex-col gap-2">
+          <Dropdown
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            selectedIndustry={selectedIndustry}
+            onIndustryChange={setSelectedIndustry}
+            selectedSort={selectedSort}
+            onSortChange={(sort) => setSelectedSort(sort as PortfolioSort)}
+          />
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            {isLoading ? (
+              <>
+                <Spinner className="size-3" />
+                Loading published projects…
+              </>
+            ) : (
+              <>Showing {projects.length} published projects</>
+            )}
+          </p>
         </div>
-      ) : projects.length === 0 ? (
-        <EmptyState
-          icon={SearchX}
-          title="No projects match these filters"
-          description="Try a different category or industry."
-          action={
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSelectedCategory("all")
-                setSelectedIndustry("all")
-              }}
-            >
-              Reset filters
-            </Button>
-          }
-        />
-      ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {projects.map(({ card, author }) => (
-            <ProjectCard
-              key={card.id}
-              project={card}
-              authorName={author?.name}
-              authorAvatar={author?.avatarUrl}
-              className="max-w-none"
-            />
-          ))}
-        </div>
-      )}
-    </div>
+
+        {error ? (
+          <EmptyState
+            icon={AlertTriangle}
+            title="Could not load projects"
+            description={error}
+            action={
+              <Button variant="outline" onClick={refetch}>
+                Try again
+              </Button>
+            }
+          />
+        ) : isLoading ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+              <div
+                key={index}
+                className="h-64 animate-pulse rounded-xl bg-muted"
+                aria-hidden
+              />
+            ))}
+          </div>
+        ) : projects.length === 0 ? (
+          <EmptyState
+            icon={SearchX}
+            title="No projects match these filters"
+            description="Try a different category or industry."
+            action={
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSelectedCategory("all")
+                  setSelectedIndustry("all")
+                }}
+              >
+                Reset filters
+              </Button>
+            }
+          />
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {projects.map(({ card, author }) => (
+              <ProjectCard
+                key={card.id}
+                project={card}
+                authorName={author?.name}
+                authorAvatar={author?.avatarUrl}
+                className="max-w-none"
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 
