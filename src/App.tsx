@@ -32,9 +32,7 @@ const JobEditor = lazy(() => import("@/pages/JobEditor"))
 const Login = lazy(() => import("@/pages/Login"))
 const MyJobs = lazy(() => import("@/pages/MyJobs"))
 const MyWork = lazy(() => import("@/pages/MyWork"))
-const PortfolioDetail = lazy(() =>
-  import("@/pages/PortfolioDetail").then((m) => ({ default: m.PortfolioDetail }))
-)
+const PortfolioDetail = lazy(() => import("@/pages/PortfolioDetail"))
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"))
 const Projects = lazy(() => import("@/pages/Projects"))
 const Profile = lazy(() => import("@/pages/Profile"))
@@ -78,13 +76,7 @@ function WorkDetailRoute() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  return (
-    <PortfolioDetail
-      projectId={id}
-      onBack={() => navigate(-1)}
-      onSelectProject={(nextId) => navigate(`/work/${nextId}`)}
-    />
-  )
+  return <PortfolioDetail projectId={id} onBack={() => navigate(-1)} />
 }
 
 function ProfileRoute() {
