@@ -8,7 +8,6 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { RoleName } from "@/interface/user"
 import { formatCompact, formatMonthYear, getInitials } from "@/lib/format"
 import { cn } from "@/lib/utils"
-import { CURRENT_USER_ID } from "@/mock-data/mock-data"
 import { useData } from "@/lib/use-data"
 
 const ROLE_LABELS: Record<RoleName, string> = {
@@ -36,7 +35,7 @@ const Profile = ({ username }: { username?: string }) => {
   const { users, freelancerProfiles, projectCards } = useData()
   const user = username
     ? users.find((candidate) => candidate.username === username)
-    : users.find((candidate) => candidate.userId === CURRENT_USER_ID)
+    : users[0]
 
   if (!user) {
     return (
@@ -64,7 +63,7 @@ const Profile = ({ username }: { username?: string }) => {
   const works = projectCards.filter(
     (card) => card.freelanceId === user.userId
   )
-  const isOwnProfile = user.userId === CURRENT_USER_ID
+  const isOwnProfile = !username
   const totalLikes = works.reduce((sum, work) => sum + work.likeCount, 0)
   const totalViews = works.reduce((sum, work) => sum + work.viewCount, 0)
   const socialLinks = Object.entries(profile?.socialLinks ?? {}).filter(

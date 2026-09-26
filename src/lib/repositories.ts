@@ -1,12 +1,6 @@
 import type { Job } from "@/interface/job"
 import type { ProjectCard } from "@/interface/projectCard"
 import type { FreelancerProfile, User } from "@/interface/user"
-import {
-  MOCK_FREELANCER_PROFILES,
-  MOCK_JOBS,
-  MOCK_PROJECT_CARDS,
-  MOCK_USERS,
-} from "@/mock-data/mock-data"
 import { supabase } from "@/lib/supabase"
 
 type DatabaseUser = {
@@ -36,14 +30,14 @@ const toUser = (row: DatabaseUser): User => ({
 })
 
 export async function listUsers(): Promise<User[]> {
-  if (!supabase) return MOCK_USERS
+  if (!supabase) return []
   const { data, error } = await supabase.from("users").select("*")
   if (error) throw error
   return data.map(toUser)
 }
 
 export async function listFreelancerProfiles(): Promise<FreelancerProfile[]> {
-  if (!supabase) return MOCK_FREELANCER_PROFILES
+  if (!supabase) return []
   const { data, error } = await supabase.from("freelancer_profiles").select("*")
   if (error) throw error
   return data.map((row) => ({
@@ -60,7 +54,7 @@ export async function listFreelancerProfiles(): Promise<FreelancerProfile[]> {
 }
 
 export async function listProjectCards(): Promise<ProjectCard[]> {
-  if (!supabase) return MOCK_PROJECT_CARDS
+  if (!supabase) return []
   const { data, error } = await supabase.from("project_cards").select("*")
   if (error) throw error
   return data.map((row) => ({
@@ -77,7 +71,7 @@ export async function listProjectCards(): Promise<ProjectCard[]> {
 }
 
 export async function listJobs(): Promise<Job[]> {
-  if (!supabase) return MOCK_JOBS
+  if (!supabase) return []
   const { data, error } = await supabase.from("jobs").select("*")
   if (error) throw error
   return data.map((row) => ({
