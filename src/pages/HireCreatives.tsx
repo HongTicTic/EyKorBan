@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react"
-import { UserX } from "lucide-react"
+import { AlertTriangle, UserX } from "lucide-react"
 
 import { DEFAULT_CATEGORY_OPTIONS, SingleDropdown } from "@/components/dropdown"
 import { EmptyState } from "@/components/empty-state"
 import { FreelancerCard } from "@/components/freelancer-card"
 import { Button } from "@/components/ui/button"
-import { RoleName } from "@/interface/user"
-import { useData } from "@/lib/use-data"
+import { Spinner } from "@/components/ui/spinner"
+import { useAsyncData } from "@/hooks/use-async-data"
+import { listPublicFreelancers } from "@/services/profiles"
 
 const SORT_OPTIONS = [
   { label: "Most liked", value: "likes" },
@@ -17,37 +18,18 @@ const SORT_OPTIONS = [
 const HireCreatives = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedSort, setSelectedSort] = useState("likes")
-  const { users, freelancerProfiles, projectCards } = useData()
 
-  const creatives = useMemo(
-    () =>
-      users
-        .filter((user) => user.role === RoleName.FREELANCER)
-        .flatMap((user) => {
-          const profile = freelancerProfiles.find(
-            (candidate) => candidate.userId === user.userId
-          )
-          if (!profile?.publicProfileEnabled) return []
-
-          const works = projectCards.filter(
-            (card) => card.freelanceId === user.userId
-          )
-          const totalLikes = works.reduce((sum, work) => sum + work.likeCount, 0)
-          return [{ user, profile, works, totalLikes }]
-        }),
-    [freelancerProfiles, projectCards, users]
+  const { data, error, isLoading, refetch } = useAsyncData(
+    () => listPublicFreelancers(selectedCategory),
+    [selectedCategory]
   )
 
+  // Sorting stays client-side: "most liked" and "rate" are derived from each
+  // creative's works, which Postgres cannot order on in the same round trip.
   const visibleCreatives = useMemo(() => {
-    const list =
-      selectedCategory === "all"
-        ? [...creatives]
-        : creatives.filter((creative) =>
-            creative.works.some((work) => work.categoryId === selectedCategory)
-          )
-
-    const rate = (creative: (typeof creatives)[number]) =>
-      creative.profile.hourlyRate ?? 0
+    const list = [...(data ?? [])]
+    const rate = (creative: (typeof list)[number]) =>
+      creative.profile?.hourlyRate ?? 0
 
     if (selectedSort === "rate-asc") {
       list.sort((a, b) => rate(a) - rate(b))
@@ -58,7 +40,7 @@ const HireCreatives = () => {
     }
 
     return list
-  }, [creatives, selectedCategory, selectedSort])
+  }, [data, selectedSort])
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -87,22 +69,54 @@ const HireCreatives = () => {
             onSelect={setSelectedSort}
           />
         </div>
-        <p className="text-xs text-muted-foreground">
-          Showing {visibleCreatives.length}{" "}
-          {visibleCreatives.length === 1 ? "creative" : "creatives"}
+        <p className="flex items-center gap-2 text-xs text-muted-foreground">
+          {isLoading ? (
+            <>
+              <Spinner className="size-3" />
+              Loading creatives…
+            </>
+          ) : (
+            <>
+              Showing {visibleCreatives.length}{" "}
+              {visibleCreatives.length === 1 ? "creative" : "creatives"}
+            </>
+          )}
         </p>
       </div>
 
-      {visibleCreatives.length > 0 ? (
+      {error ? (
+        <EmptyState
+          icon={AlertTriangle}
+          title="Could not load creatives"
+          description={error}
+          action={
+            <Button variant="outline" onClick={refetch}>
+              Try again
+            </Button>
+          }
+        />
+      ) : isLoading ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {visibleCreatives.map((creative) => (
-            <FreelancerCard
-              key={creative.user.userId}
-              user={creative.user}
-              profile={creative.profile}
-              works={creative.works}
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-72 animate-pulse rounded-xl bg-muted"
+              aria-hidden
             />
           ))}
+        </div>
+      ) : visibleCreatives.length > 0 ? (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {visibleCreatives.map((creative) =>
+            creative.profile ? (
+              <FreelancerCard
+                key={creative.user.userId}
+                user={creative.user}
+                profile={creative.profile}
+                works={creative.works}
+              />
+            ) : null
+          )}
         </div>
       ) : (
         <EmptyState

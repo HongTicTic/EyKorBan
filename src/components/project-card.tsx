@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Link } from "react-router"
 import { Image as ImageIcon, Heart, Eye } from "lucide-react"
 import {
   Card,
@@ -73,8 +74,10 @@ export function ProjectCard({
   title = project?.title ?? "Roaster identity and packaging",
   subtitle = project?.subtitle,
   image = project?.coverImageUrl,
-  authorName = "Mira Renko",
-  authorAvatar = "https://github.com/shadcn.png",
+  // No invented person as a fallback: a missing byline reads as unknown, and
+  // the avatar falls back to initials rather than a stranger's photo.
+  authorName = "Unknown creator",
+  authorAvatar,
   authorInitials,
   likeCount = project?.likeCount,
   viewCount = project?.viewCount,
@@ -84,7 +87,9 @@ export function ProjectCard({
   className,
   target,
 }: ProjectCardProps) {
-  const cardHref = href ?? (id ? `/project/${id}` : "#")
+  // Portfolio items live at /work/:id. The old "/project/:id" matched no
+  // route, so every card 404'd — and "project" now means an engagement.
+  const cardHref = href ?? (id ? `/work/${id}` : "#")
   const initials = authorInitials ?? getInitials(authorName)
 
   // Derive tags from prop, or from project metadata, or fallback default
@@ -124,8 +129,8 @@ export function ProjectCard({
   })
 
   return (
-    <a
-      href={cardHref}
+    <Link
+      to={cardHref}
       onClick={onClick}
       target={target}
       className={cn(
@@ -138,6 +143,9 @@ export function ProjectCard({
         <div className="relative aspect-[1.15/1] w-full overflow-hidden bg-neutral-100/90 dark:bg-neutral-800/70 flex items-center justify-center border-b border-neutral-100 dark:border-neutral-800/60">
           {image ? (
             <img
+              width={800}
+              height={600}
+              loading="lazy"
               src={image}
               alt={title}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -236,6 +244,6 @@ export function ProjectCard({
           </CardFooter>
         )}
       </Card>
-    </a>
+    </Link>
   )
 }

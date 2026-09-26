@@ -35,3 +35,12 @@ export function getInitials(name: string) {
     .join("")
     .toUpperCase()
 }
+
+/** Currency, using the viewer's locale for separators and symbol placement. */
+export function money(value: number, currency = "USD"): string {
+  return new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
