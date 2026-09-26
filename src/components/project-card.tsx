@@ -138,6 +138,9 @@ export function ProjectCard({
         <div className="relative aspect-[1.15/1] w-full overflow-hidden bg-neutral-100/90 dark:bg-neutral-800/70 flex items-center justify-center border-b border-neutral-100 dark:border-neutral-800/60">
           {image ? (
             <img
+              width={800}
+              height={600}
+              loading="lazy"
               src={image}
               alt={title}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

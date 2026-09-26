@@ -1,4 +1,5 @@
 import { Heart, ImageIcon, LayoutGrid } from "lucide-react"
+import { Link } from "react-router"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -25,7 +26,14 @@ export function FreelancerCard({ user, profile, works }: FreelancerCardProps) {
     <article className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-xs transition-shadow hover:shadow-md">
       <div className="aspect-[16/9] w-full overflow-hidden bg-muted">
         {cover ? (
-          <img src={cover} alt="" className="size-full object-cover" />
+          <img
+            src={cover}
+            alt=""
+            width={400}
+            height={300}
+            loading="lazy"
+            className="size-full object-cover"
+          />
         ) : (
           <div className="flex size-full items-center justify-center text-muted-foreground">
             <ImageIcon className="size-8" />
@@ -89,9 +97,9 @@ export function FreelancerCard({ user, profile, works }: FreelancerCardProps) {
           >
             View profile
           </a>
-          <a href="/login" className={cn(buttonVariants(), "rounded-lg")}>
+          <Link to="/login" className={cn(buttonVariants(), "rounded-lg")}>
             Start a project
-          </a>
+          </Link>
         </div>
       </div>
     </article>
