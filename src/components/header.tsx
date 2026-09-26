@@ -8,8 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navLinks = [
   { label: "Explore", href: "/" },
-  { label: "Hire Creatives", href: "/hire-creatives" },
-  { label: "Find Work", href: "/find-work" },
+  { label: "Hire Creatives", href: "./hire-creatives" },
+  { label: "Find Work", href: "./find-work" },
 ]
 
 export function Header() {
