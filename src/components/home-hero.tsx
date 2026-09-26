@@ -12,6 +12,22 @@ import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "eykorban.audience"
 
+/**
+ * Freelancers at work, for the decorative collage. All free under the
+ * Unsplash License; served from images.unsplash.com so the service worker's
+ * CacheFirst "images" rule (vite.config.ts) keeps them for offline use.
+ */
+const HERO_PHOTOS = {
+  // Van Tay Media — unsplash.com/photos/9iDbe_2R_K0
+  laptop: "photo-1565688268889-d080fc73ba0a",
+  // Michelle Ding — unsplash.com/photos/eyEXCaFpvvU
+  sketching: "photo-1565019011521-b0575cbb57c8",
+  // Brooke Cagle — unsplash.com/photos/_ihwcvahzRk
+  cafe: "photo-1543270122-f7a11ad44f3a",
+  // phyo min — unsplash.com/photos/P002vaEJlvk
+  desk: "photo-1684125483810-b4c196bc9162",
+}
+
 /** The accent word cycles through the platform's real categories. */
 const ROTATING: MessageKey[] = [
   "hero.word.productDesign",
@@ -151,12 +167,24 @@ export function HomeHero() {
         <div aria-hidden className="hidden lg:block">
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-4 pt-10">
-              <HeroTile className="aspect-[4/5] bg-linear-to-br from-primary/80 to-rose-400" />
-              <HeroTile className="aspect-square bg-linear-to-br from-sky-400 to-indigo-500" />
+              <HeroTile
+                photo={HERO_PHOTOS.laptop}
+                className="aspect-[4/5] bg-linear-to-br from-primary/80 to-rose-400"
+              />
+              <HeroTile
+                photo={HERO_PHOTOS.sketching}
+                className="aspect-square bg-linear-to-br from-sky-400 to-indigo-500"
+              />
             </div>
             <div className="flex flex-col gap-4">
-              <HeroTile className="aspect-square bg-linear-to-br from-amber-300 to-orange-500" />
-              <HeroTile className="aspect-[4/5] bg-linear-to-br from-emerald-400 to-teal-600" />
+              <HeroTile
+                photo={HERO_PHOTOS.cafe}
+                className="aspect-square bg-linear-to-br from-amber-300 to-orange-500"
+              />
+              <HeroTile
+                photo={HERO_PHOTOS.desk}
+                className="aspect-[4/5] bg-linear-to-br from-emerald-400 to-teal-600"
+              />
             </div>
           </div>
         </div>
@@ -165,13 +193,33 @@ export function HomeHero() {
   )
 }
 
-function HeroTile({ className }: { className?: string }) {
+function heroPhotoUrl(photo: string, width: number) {
+  return `https://images.unsplash.com/${photo}?auto=format&fit=crop&w=${width}&q=80`
+}
+
+/**
+ * The gradient in `className` stays behind the photo, so the tile still has
+ * colour while the image loads or when it is offline and not yet cached.
+ */
+function HeroTile({ photo, className }: { photo: string; className?: string }) {
   return (
     <div
       className={cn(
-        "rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/10",
+        "overflow-hidden rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/10",
         className
       )}
-    />
+    >
+      {/* lazy: the collage is display:none below lg, and lazy images that
+          never enter the viewport are never fetched — phones skip all four. */}
+      <img
+        src={heroPhotoUrl(photo, 640)}
+        srcSet={`${heroPhotoUrl(photo, 420)} 420w, ${heroPhotoUrl(photo, 640)} 640w, ${heroPhotoUrl(photo, 960)} 960w`}
+        sizes="(min-width: 1536px) 420px, (min-width: 1024px) 25vw, 1px"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="size-full object-cover"
+      />
+    </div>
   )
 }
