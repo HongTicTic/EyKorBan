@@ -1,14 +1,26 @@
-import { Calendar, FolderOpen, Globe, Link2, Pencil, UserX } from "lucide-react"
+import { Link } from "react-router"
+import {
+  AlertTriangle,
+  Calendar,
+  FolderOpen,
+  Globe,
+  Link2,
+  Pencil,
+  UserX,
+} from "lucide-react"
 
+import { useAuth } from "@/components/auth-provider"
 import { EmptyState } from "@/components/empty-state"
 import { ProjectCard } from "@/components/project-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
+import { useAsyncData } from "@/hooks/use-async-data"
 import { RoleName } from "@/interface/user"
 import { formatCompact, formatMonthYear, getInitials } from "@/lib/format"
 import { cn } from "@/lib/utils"
-import { useData } from "@/lib/use-data"
+import { getCreativeById, getCreativeByUsername } from "@/services/profiles"
 
 const ROLE_LABELS: Record<RoleName, string> = {
   [RoleName.FREELANCER]: "Freelancer",
@@ -32,24 +44,63 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 const Profile = ({ username }: { username?: string }) => {
-  const { users, freelancerProfiles, projectCards } = useData()
-  const user = username
-    ? users.find((candidate) => candidate.username === username)
-    : users[0]
+  const { user: signedInUser } = useAuth()
+  const signedInId = signedInUser?.userId ?? null
 
-  if (!user) {
+  // Viewing your own profile includes your drafts (FR-009); RLS enforces that
+  // rule server-side, so this flag only affects what is asked for.
+  const isOwnProfile = username
+    ? signedInUser?.username === username
+    : Boolean(signedInId)
+
+  const { data, error, isLoading, refetch } = useAsyncData(() => {
+    if (username) return getCreativeByUsername(username, isOwnProfile)
+    if (signedInId) return getCreativeById(signedInId, true)
+    return Promise.resolve(null)
+  }, [username, signedInId, isOwnProfile])
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto flex max-w-5xl justify-center px-4 py-24">
+        <Spinner className="size-6 text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto max-w-5xl px-4 py-16">
+        <EmptyState
+          icon={AlertTriangle}
+          title="Could not load this profile"
+          description={error}
+          action={
+            <Button variant="outline" onClick={refetch}>
+              Try again
+            </Button>
+          }
+        />
+      </div>
+    )
+  }
+
+  if (!data) {
     return (
       <div className="container mx-auto max-w-5xl px-4 py-16">
         <EmptyState
           icon={UserX}
-          title="Profile not found"
-          description={`There is no one called @${username} on the platform.`}
+          title={username ? "Profile not found" : "You are not signed in"}
+          description={
+            username
+              ? `There is no one called @${username} on the platform.`
+              : "Sign in to see your own profile and the work you have published."
+          }
           action={
             <a
-              href="./hire-creatives"
+              href={username ? "/hire-creatives" : "/login"}
               className={cn(buttonVariants({ variant: "outline" }))}
             >
-              Browse creatives
+              {username ? "Browse creatives" : "Sign in"}
             </a>
           }
         />
@@ -57,15 +108,7 @@ const Profile = ({ username }: { username?: string }) => {
     )
   }
 
-  const profile = freelancerProfiles.find(
-    (candidate) => candidate.userId === user.userId
-  )
-  const works = projectCards.filter(
-    (card) => card.freelanceId === user.userId
-  )
-  const isOwnProfile = !username
-  const totalLikes = works.reduce((sum, work) => sum + work.likeCount, 0)
-  const totalViews = works.reduce((sum, work) => sum + work.viewCount, 0)
+  const { user, profile, works, totalLikes, totalViews } = data
   const socialLinks = Object.entries(profile?.socialLinks ?? {}).filter(
     (entry): entry is [keyof typeof SOCIAL_LABELS, string] => Boolean(entry[1])
   )
@@ -90,9 +133,9 @@ const Profile = ({ username }: { username?: string }) => {
                 Edit profile
               </Button>
             ) : (
-              <a href="/login" className={cn(buttonVariants(), "rounded-lg")}>
+              <Link to="/login" className={cn(buttonVariants(), "rounded-lg")}>
                 Start a project
-              </a>
+              </Link>
             )}
           </div>
 

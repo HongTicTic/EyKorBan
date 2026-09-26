@@ -13,6 +13,7 @@ import {
   FieldSet,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { RoleName } from "@/interface/user"
 
 type SignupRole = RoleName.CLIENT | RoleName.FREELANCER
@@ -26,6 +27,10 @@ export interface SignupFormValues {
 
 interface SignupFormProps {
   onSubmit?: (values: SignupFormValues) => void
+  /** Disables the form and shows a spinner while the request is in flight. */
+  isSubmitting?: boolean
+  /** Message shown above the submit button when signup fails. */
+  error?: string | null
   defaultRole?: SignupRole
   loginHref?: string
   termsHref?: string
@@ -50,6 +55,8 @@ const roleOptions = [
 
 export function SignupForm({
   onSubmit,
+  isSubmitting = false,
+  error = null,
   defaultRole = RoleName.CLIENT,
   loginHref = "/login",
   termsHref = "/terms",
@@ -60,6 +67,8 @@ export function SignupForm({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (isSubmitting) return
+
     const data = new FormData(event.currentTarget)
     onSubmit?.({
       role,
@@ -170,12 +179,31 @@ export function SignupForm({
             </FieldLabel>
           </Field>
 
+          {error && (
+            <p
+              role="alert"
+              className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+            >
+              {error}
+            </p>
+          )}
+
           <Button
             type="submit"
+            disabled={isSubmitting}
             className="h-12 w-full rounded-xl text-base font-semibold"
           >
-            Create account
-            <ArrowRight data-icon="inline-end" />
+            {isSubmitting ? (
+              <>
+                <Spinner data-icon="inline-start" />
+                Creating account…
+              </>
+            ) : (
+              <>
+                Create account
+                <ArrowRight data-icon="inline-end" />
+              </>
+            )}
           </Button>
 
           <a

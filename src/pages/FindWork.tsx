@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react"
-import { SearchX, X } from "lucide-react"
+import { useState } from "react"
+import { AlertTriangle, SearchX, X } from "lucide-react"
 
 import {
   DEFAULT_CATEGORY_OPTIONS,
@@ -9,7 +9,9 @@ import {
 import { EmptyState } from "@/components/empty-state"
 import { JobCard } from "@/components/job-card"
 import { Button } from "@/components/ui/button"
-import { useData } from "@/lib/use-data"
+import { Spinner } from "@/components/ui/spinner"
+import { useAsyncData } from "@/hooks/use-async-data"
+import { listOpenJobs } from "@/services/jobs"
 
 function FilterChip({
   label,
@@ -34,26 +36,18 @@ function FilterChip({
 const FindWork = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIndustry, setSelectedIndustry] = useState("all")
-  const { jobs } = useData()
 
-  const openJobs = useMemo(
+  // Both filters are applied by Postgres; the query re-runs when either changes.
+  const { data, error, isLoading, refetch } = useAsyncData(
     () =>
-      jobs.filter((job) => job.status === "open").sort(
-        (a, b) =>
-          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-      ),
-    [jobs]
+      listOpenJobs({
+        categoryId: selectedCategory,
+        industryId: selectedIndustry,
+      }),
+    [selectedCategory, selectedIndustry]
   )
 
-  const visibleJobs = useMemo(
-    () =>
-      openJobs.filter(
-        (job) =>
-          (selectedCategory === "all" || job.categoryId === selectedCategory) &&
-          (selectedIndustry === "all" || job.industryId === selectedIndustry)
-      ),
-    [openJobs, selectedCategory, selectedIndustry]
-  )
+  const visibleJobs = data ?? []
 
   const categoryLabel = DEFAULT_CATEGORY_OPTIONS.find(
     (option) => option.value === selectedCategory
@@ -119,14 +113,45 @@ const FindWork = () => {
           </div>
         )}
 
-        <p className="text-xs text-muted-foreground">
-          {visibleJobs.length} open {visibleJobs.length === 1 ? "job" : "jobs"}
+        <p className="flex items-center gap-2 text-xs text-muted-foreground">
+          {isLoading ? (
+            <>
+              <Spinner className="size-3" />
+              Loading open jobs…
+            </>
+          ) : (
+            <>
+              {visibleJobs.length} open{" "}
+              {visibleJobs.length === 1 ? "job" : "jobs"}
+            </>
+          )}
         </p>
       </div>
 
-      {visibleJobs.length > 0 ? (
+      {error ? (
+        <EmptyState
+          icon={AlertTriangle}
+          title="Could not load jobs"
+          description={error}
+          action={
+            <Button variant="outline" onClick={refetch}>
+              Try again
+            </Button>
+          }
+        />
+      ) : isLoading ? (
         <div className="flex flex-col gap-4">
-          {visibleJobs.map((job) => (
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-32 animate-pulse rounded-xl bg-muted"
+              aria-hidden
+            />
+          ))}
+        </div>
+      ) : visibleJobs.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          {visibleJobs.map(({ job }) => (
             <JobCard key={job.id} job={job} />
           ))}
         </div>
