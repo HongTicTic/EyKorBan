@@ -24,9 +24,9 @@ const demoFreelancer: User = {
 }
 
 function getPage(path: string) {
-  if (path === "./hire-creatives") return <HireCreatives />
-  if (path === "./find-work") return <FindWork />
-  if (path === "./profile") return <Profile />
+  if (path === "/hire-creatives") return <HireCreatives />
+  if (path === "/find-work") return <FindWork />
+  if (path === "/profile") return <Profile />
   if (path.startsWith("./profile/")) {
     return <Profile username={decodeURIComponent(path.split("/")[2])} />
   }
